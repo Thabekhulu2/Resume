@@ -6,7 +6,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const SCORING_TRIGGER_URL = Deno.env.get("SCORING_TRIGGER_URL") ?? "http://temporal-worker:8001";
+const SCORING_TRIGGER_URL = Deno.env.get("SCORING_TRIGGER_URL") ?? "http://host.docker.internal:8001";
 
 interface StartScoringRequest {
   candidate_entity_id?: string;

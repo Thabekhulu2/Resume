@@ -6,7 +6,10 @@
       "type": "supabase",
       "table": "entities",
       "select": "*, entity_versions(*)",
-      "filters": [{ "field": "id", "op": "eq", "value": "{{params.id}}" }],
+      "filters": [
+        { "field": "id", "op": "eq", "value": "{{params.id}}" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true }
+      ],
       "single": true
     },
     "facts": {
@@ -32,7 +35,10 @@
       "type": "supabase",
       "table": "entities",
       "select": "*, entity_versions(*)",
-      "filters": [{ "field": "id", "op": "eq", "value": "{{data.relationships[0].parent_id}}" }],
+      "filters": [
+        { "field": "id", "op": "eq", "value": "{{data.relationships[0].parent_id}}" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true }
+      ],
       "single": true,
       "enabled": "{{data.relationships.length > 0}}"
     }

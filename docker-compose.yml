@@ -80,8 +80,16 @@ services:
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-dev-service-role-key}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - USE_LOCAL_LLM=${USE_LOCAL_LLM:-0}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1}
       - RESUMES_STORAGE_BUCKET=${RESUMES_STORAGE_BUCKET:-resumes}
       - HTTP_TRIGGER_PORT=${HTTP_TRIGGER_PORT:-8001}
+    # Publish the HTTP trigger port to the host so the Supabase Edge Function
+    # (running in the separate supabase-CLI-managed Docker network) can reach
+    # it via host.docker.internal -- container-name DNS only works within the
+    # same compose network.
+    ports:
+      - "8001:8001"
 
   frontend:
     build:

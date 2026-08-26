@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import type { EngineComponentProps, ActionDefinition } from '@/engine/types';
-import { useUIEngine } from '@/engine/UIEngineContext';
+import { useUIEngine, useItemContext } from '@/engine/UIEngineContext';
 
 interface EngineTextareaProps extends EngineComponentProps {
   value?: string;
@@ -36,16 +36,17 @@ export function EngineTextarea({
   className,
 }: EngineTextareaProps) {
   const { dispatch } = useUIEngine();
+  const itemContext = useItemContext();
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange) {
-      dispatch(onChange, { event: e });
+      dispatch(onChange, { ...itemContext, event: e });
     }
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (onBlur) {
-      dispatch(onBlur, { event: e });
+      dispatch(onBlur, { ...itemContext, event: e });
     }
   };
 

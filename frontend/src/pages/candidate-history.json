@@ -1,0 +1,267 @@
+{
+  "id": "candidate-history",
+  "title": "Candidate History",
+  "state": {
+    "selectedIds": [],
+    "candidateToDeleteId": null
+  },
+  "dataSources": {
+    "candidates": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "*, entity_versions(*), entity_facts(*)",
+      "filters": [
+        { "field": "entity_type", "op": "eq", "value": "candidate" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true }
+      ],
+      "order": [{ "column": "created_at", "ascending": false }]
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "direction": "horizontal", "justify": "between", "align": "start" },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 1 },
+            "children": [
+              { "type": "Heading", "props": { "level": 1, "children": "Candidate History" } },
+              { "type": "Text", "props": { "variant": "muted", "children": "All candidates scored so far" } }
+            ]
+          },
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "spacing": 2 },
+            "children": [
+              {
+                "type": "Text",
+                "if": "{{state.selectedIds.length > 0}}",
+                "props": { "variant": "muted", "size": "sm", "children": "{{state.selectedIds.length}} selected" }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "destructive",
+                  "children": "Delete selected",
+                  "disabled": "{{state.selectedIds.length === 0}}",
+                  "onClick": { "action": "openModal", "modalId": "confirmDeleteBulk" }
+                }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "outline",
+                  "children": "Refresh",
+                  "onClick": { "action": "refetch", "source": "candidates" }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "if": "{{data.candidates.length === 0}}",
+        "props": { "variant": "muted", "children": "No candidates scored yet." }
+      },
+      {
+        "type": "Stack",
+        "props": { "spacing": 3 },
+        "children": [
+          {
+            "type": "Card",
+            "each": "{{data.candidates}}",
+            "as": "candidate",
+            "key": "{{candidate.id}}",
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "direction": "horizontal", "justify": "between", "align": "center" },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 3, "align": "center" },
+                    "children": [
+                      {
+                        "type": "Checkbox",
+                        "props": {
+                          "checked": "{{state.selectedIds includes candidate.id}}",
+                          "onChange": { "action": "toggleArrayItem", "key": "selectedIds", "value": "{{candidate.id}}" }
+                        }
+                      },
+                      {
+                        "type": "Stack",
+                        "props": { "spacing": 1 },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": {
+                              "weight": "medium",
+                              "children": "{{candidate.entity_versions[0].data.resume_file_path}}"
+                            }
+                          },
+                          {
+                            "type": "Text",
+                            "props": { "variant": "muted", "size": "sm", "children": "Uploaded {{candidate.created_at}}" }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 3, "align": "center" },
+                    "children": [
+                      {
+                        "type": "Badge",
+                        "if": "{{candidate.entity_versions[0].data.status === 'scored'}}",
+                        "props": { "children": "Scored" }
+                      },
+                      {
+                        "type": "Badge",
+                        "if": "{{candidate.entity_versions[0].data.status === 'scoring'}}",
+                        "props": { "variant": "secondary", "children": "Scoring..." }
+                      },
+                      {
+                        "type": "Badge",
+                        "if": "{{candidate.entity_versions[0].data.status === 'failed'}}",
+                        "props": { "variant": "destructive", "children": "Failed" }
+                      },
+                      {
+                        "type": "Text",
+                        "if": "{{candidate.entity_facts.length > 0}}",
+                        "props": { "weight": "semibold", "children": "{{candidate.entity_facts[0].value}}%" }
+                      },
+                      {
+                        "type": "Link",
+                        "props": { "to": "/candidates/{{candidate.id}}", "children": "View" }
+                      },
+                      {
+                        "type": "Button",
+                        "props": {
+                          "variant": "destructive",
+                          "size": "sm",
+                          "children": "Delete",
+                          "onClick": {
+                            "action": "sequence",
+                            "actions": [
+                              { "action": "setState", "key": "candidateToDeleteId", "value": "{{candidate.id}}" },
+                              { "action": "openModal", "modalId": "confirmDeleteOne" }
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "modals": {
+    "confirmDeleteOne": {
+      "title": "Delete this candidate?",
+      "size": "sm",
+      "content": {
+        "type": "Stack",
+        "props": { "spacing": 4 },
+        "children": [
+          {
+            "type": "Alert",
+            "props": {
+              "variant": "destructive",
+              "title": "Are you sure?",
+              "description": "This permanently deletes the candidate, resume data, and score. This cannot be undone."
+            }
+          },
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "justify": "end", "spacing": 2 },
+            "children": [
+              {
+                "type": "Button",
+                "props": { "variant": "outline", "children": "Cancel", "onClick": { "action": "closeModal" } }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "destructive",
+                  "children": "Delete",
+                  "onClick": {
+                    "action": "apiCall",
+                    "operation": "delete",
+                    "table": "entities",
+                    "match": { "id": "{{state.candidateToDeleteId}}" },
+                    "onSuccess": {
+                      "action": "sequence",
+                      "actions": [
+                        { "action": "closeModal" },
+                        { "action": "refetch", "source": "candidates" }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "confirmDeleteBulk": {
+      "title": "Delete selected candidates?",
+      "size": "sm",
+      "content": {
+        "type": "Stack",
+        "props": { "spacing": 4 },
+        "children": [
+          {
+            "type": "Alert",
+            "props": {
+              "variant": "destructive",
+              "title": "Are you sure?",
+              "description": "This permanently deletes {{state.selectedIds.length}} candidate(s), their resume data, and scores. This cannot be undone."
+            }
+          },
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "justify": "end", "spacing": 2 },
+            "children": [
+              {
+                "type": "Button",
+                "props": { "variant": "outline", "children": "Cancel", "onClick": { "action": "closeModal" } }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "destructive",
+                  "children": "Delete",
+                  "onClick": {
+                    "action": "apiCall",
+                    "operation": "delete",
+                    "table": "entities",
+                    "match": { "id": "{{state.selectedIds}}" },
+                    "onSuccess": {
+                      "action": "sequence",
+                      "actions": [
+                        { "action": "closeModal" },
+                        { "action": "setState", "key": "selectedIds", "value": [] },
+                        { "action": "refetch", "source": "candidates" }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

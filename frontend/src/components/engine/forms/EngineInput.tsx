@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import type { EngineComponentProps, ActionDefinition } from '@/engine/types';
-import { useUIEngine } from '@/engine/UIEngineContext';
+import { useUIEngine, useItemContext } from '@/engine/UIEngineContext';
 
 interface EngineInputProps extends EngineComponentProps {
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
@@ -36,16 +36,17 @@ export function EngineInput({
   className,
 }: EngineInputProps) {
   const { dispatch } = useUIEngine();
+  const itemContext = useItemContext();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) {
-      dispatch(onChange, { event: e });
+      dispatch(onChange, { ...itemContext, event: e });
     }
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (onBlur) {
-      dispatch(onBlur, { event: e });
+      dispatch(onBlur, { ...itemContext, event: e });
     }
   };
 

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CandidatesIndexRouteImport } from './routes/candidates/index'
 import { Route as CandidatesUploadRouteImport } from './routes/candidates/upload'
 import { Route as CandidatesIdRouteImport } from './routes/candidates/$id'
 import { Route as EntitiesEntityTypeIndexRouteImport } from './routes/entities/$entityType/index'
@@ -18,6 +19,11 @@ import { Route as EntitiesEntityTypeIdRouteImport } from './routes/entities/$ent
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CandidatesIndexRoute = CandidatesIndexRouteImport.update({
+  id: '/candidates/',
+  path: '/candidates/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CandidatesUploadRoute = CandidatesUploadRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/candidates/$id': typeof CandidatesIdRoute
   '/candidates/upload': typeof CandidatesUploadRoute
+  '/candidates': typeof CandidatesIndexRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof EntitiesEntityTypeIndexRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/candidates/$id': typeof CandidatesIdRoute
   '/candidates/upload': typeof CandidatesUploadRoute
+  '/candidates': typeof CandidatesIndexRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof EntitiesEntityTypeIndexRoute
 }
@@ -60,6 +68,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/candidates/$id': typeof CandidatesIdRoute
   '/candidates/upload': typeof CandidatesUploadRoute
+  '/candidates/': typeof CandidatesIndexRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType/': typeof EntitiesEntityTypeIndexRoute
 }
@@ -69,6 +78,7 @@ export interface FileRouteTypes {
     | '/'
     | '/candidates/$id'
     | '/candidates/upload'
+    | '/candidates'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
   fileRoutesByTo: FileRoutesByTo
@@ -76,6 +86,7 @@ export interface FileRouteTypes {
     | '/'
     | '/candidates/$id'
     | '/candidates/upload'
+    | '/candidates'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
   id:
@@ -83,6 +94,7 @@ export interface FileRouteTypes {
     | '/'
     | '/candidates/$id'
     | '/candidates/upload'
+    | '/candidates/'
     | '/entities/$entityType/$id'
     | '/entities/$entityType/'
   fileRoutesById: FileRoutesById
@@ -91,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CandidatesIdRoute: typeof CandidatesIdRoute
   CandidatesUploadRoute: typeof CandidatesUploadRoute
+  CandidatesIndexRoute: typeof CandidatesIndexRoute
   EntitiesEntityTypeIdRoute: typeof EntitiesEntityTypeIdRoute
   EntitiesEntityTypeIndexRoute: typeof EntitiesEntityTypeIndexRoute
 }
@@ -102,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/candidates/': {
+      id: '/candidates/'
+      path: '/candidates'
+      fullPath: '/candidates'
+      preLoaderRoute: typeof CandidatesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/candidates/upload': {
@@ -139,6 +159,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CandidatesIdRoute: CandidatesIdRoute,
   CandidatesUploadRoute: CandidatesUploadRoute,
+  CandidatesIndexRoute: CandidatesIndexRoute,
   EntitiesEntityTypeIdRoute: EntitiesEntityTypeIdRoute,
   EntitiesEntityTypeIndexRoute: EntitiesEntityTypeIndexRoute,
 }

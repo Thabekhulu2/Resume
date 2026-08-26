@@ -40,6 +40,27 @@ const defaultContext: UIEngineContextValue = {
 export const UIEngineContext = createContext<UIEngineContextValue>(defaultContext);
 
 /**
+ * Item context - carries the current `each` loop bindings (e.g. `item`/`index`
+ * or a custom `as` name like `candidate`) down through the component tree.
+ * resolveValue() defers action objects (onClick/onChange) unevaluated until
+ * dispatch time, by which point the loop that produced them has already
+ * returned -- so any component that dispatches an action must merge this
+ * back in, or expressions like {{candidate.id}} inside that action resolve
+ * to undefined. See ComponentRenderer's `each` handling for the provider.
+ */
+const ItemContext = createContext<Partial<ExpressionContext> | undefined>(undefined);
+
+export const ItemContextProvider = ItemContext.Provider;
+
+/**
+ * Hook to access the current `each` loop's item bindings, if any.
+ * Components that call dispatch() must merge this in as additionalContext.
+ */
+export function useItemContext(): Partial<ExpressionContext> | undefined {
+  return useContext(ItemContext);
+}
+
+/**
  * Hook to access UIEngine context
  */
 export function useUIEngine(): UIEngineContextValue {

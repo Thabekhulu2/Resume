@@ -5,7 +5,7 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { EngineComponentProps, ActionDefinition } from '@/engine/types';
-import { useUIEngine } from '@/engine/UIEngineContext';
+import { useUIEngine, useItemContext } from '@/engine/UIEngineContext';
 import { Loader2 } from 'lucide-react';
 
 interface EngineButtonProps extends EngineComponentProps {
@@ -29,10 +29,11 @@ export function EngineButton({
   children,
 }: EngineButtonProps) {
   const { dispatch } = useUIEngine();
+  const itemContext = useItemContext();
 
   const handleClick = async () => {
     if (onClick && !disabled && !loading) {
-      await dispatch(onClick);
+      await dispatch(onClick, itemContext);
     }
   };
 

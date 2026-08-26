@@ -5,7 +5,7 @@
 import { createRootRoute, Outlet, Link, useLocation } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { cn } from '@/lib/utils';
-import { Home, UserPlus } from 'lucide-react';
+import { Home, UserPlus, History } from 'lucide-react';
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -66,6 +66,19 @@ function Sidebar() {
         >
           <UserPlus className="h-4 w-4" />
           Score a Candidate
+        </Link>
+
+        <Link
+          to="/candidates"
+          className={cn(
+            'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors',
+            location.pathname === '/candidates'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-muted'
+          )}
+        >
+          <History className="h-4 w-4" />
+          Candidate History
         </Link>
       </nav>
     </aside>

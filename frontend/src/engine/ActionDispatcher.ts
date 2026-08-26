@@ -18,6 +18,7 @@ import type {
   CustomAction,
   SequenceAction,
   ConditionalAction,
+  ToggleArrayItemAction,
   ExpressionContext,
 } from './types';
 import { evaluateExpression, resolveValue } from './ExpressionEvaluator';
@@ -94,6 +95,9 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
       case 'conditional':
         return handleConditional(action, context);
 
+      case 'toggleArrayItem':
+        return handleToggleArrayItem(action, context);
+
       default:
         console.warn(`Unknown action type: ${(action as { action: string }).action}`);
     }
@@ -105,6 +109,18 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
   function handleSetState(action: SetStateAction, context: ExpressionContext): void {
     const value = resolveValue(action.value, context);
     setState(action.key, value);
+  }
+
+  /**
+   * Handle toggleArrayItem action (add value if absent, remove if present)
+   */
+  function handleToggleArrayItem(action: ToggleArrayItemAction, context: ExpressionContext): void {
+    const value = resolveValue(action.value, context);
+    const current = (context.state[action.key] as unknown[]) || [];
+    const next = current.includes(value)
+      ? current.filter((item) => item !== value)
+      : [...current, value];
+    setState(action.key, next);
   }
 
   /**
@@ -147,11 +163,20 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
           result = await supabase.from(action.table).upsert(data as Record<string, unknown>[]);
           break;
 
-        case 'delete':
+        case 'delete': {
           if (!action.table) throw new Error('Table required for delete');
           if (!match) throw new Error('Match criteria required for delete');
-          result = await supabase.from(action.table).delete().match(match);
+          // Array values use .in() (e.g. bulk-deleting a set of selected ids);
+          // scalar values use .eq(), equivalent to .match() for a single key.
+          let deleteQuery = supabase.from(action.table).delete();
+          for (const [key, value] of Object.entries(match)) {
+            deleteQuery = Array.isArray(value)
+              ? deleteQuery.in(key, value as unknown[])
+              : deleteQuery.eq(key, value);
+          }
+          result = await deleteQuery;
           break;
+        }
 
         case 'rpc':
           if (!action.function) throw new Error('Function name required for rpc');

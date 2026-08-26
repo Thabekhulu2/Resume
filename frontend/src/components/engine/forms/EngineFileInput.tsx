@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import type { EngineComponentProps, ActionDefinition } from '@/engine/types';
-import { useUIEngine } from '@/engine/UIEngineContext';
+import { useUIEngine, useItemContext } from '@/engine/UIEngineContext';
 
 interface EngineFileInputProps extends EngineComponentProps {
   accept?: string;
@@ -31,6 +31,7 @@ export function EngineFileInput({
   className,
 }: EngineFileInputProps) {
   const { dispatch } = useUIEngine();
+  const itemContext = useItemContext();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -39,7 +40,7 @@ export function EngineFileInput({
     const extension = file.name.includes('.') ? file.name.slice(file.name.lastIndexOf('.')) : '';
     const path = `${crypto.randomUUID()}${extension}`;
 
-    dispatch(onChange, { event: { file, fileName: file.name, path } });
+    dispatch(onChange, { ...itemContext, event: { file, fileName: file.name, path } });
   };
 
   const inputId = name || `file-input-${Math.random().toString(36).slice(2, 9)}`;

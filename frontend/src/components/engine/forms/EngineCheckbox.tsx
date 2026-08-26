@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import type { EngineComponentProps, ActionDefinition } from '@/engine/types';
-import { useUIEngine } from '@/engine/UIEngineContext';
+import { useUIEngine, useItemContext } from '@/engine/UIEngineContext';
 
 interface EngineCheckboxProps extends EngineComponentProps {
   checked?: boolean;
@@ -26,10 +26,14 @@ export function EngineCheckbox({
   className,
 }: EngineCheckboxProps) {
   const { dispatch } = useUIEngine();
+  const itemContext = useItemContext();
 
   const handleChange = (newChecked: boolean) => {
     if (onChange) {
-      dispatch(onChange, { event: { target: { checked: newChecked, value: newChecked } } });
+      dispatch(onChange, {
+        ...itemContext,
+        event: { target: { checked: newChecked, value: newChecked } },
+      });
     }
   };
 

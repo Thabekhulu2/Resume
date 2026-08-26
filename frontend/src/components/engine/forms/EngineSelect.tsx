@@ -12,7 +12,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import type { EngineComponentProps, ActionDefinition } from '@/engine/types';
-import { useUIEngine } from '@/engine/UIEngineContext';
+import { useUIEngine, useItemContext } from '@/engine/UIEngineContext';
 
 interface SelectOption {
   value: string;
@@ -46,10 +46,11 @@ export function EngineSelect({
   className,
 }: EngineSelectProps) {
   const { dispatch } = useUIEngine();
+  const itemContext = useItemContext();
 
   const handleChange = (newValue: string) => {
     if (onChange) {
-      dispatch(onChange, { event: { target: { value: newValue } } });
+      dispatch(onChange, { ...itemContext, event: { target: { value: newValue } } });
     }
   };
 

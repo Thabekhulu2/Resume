@@ -76,6 +76,15 @@ function evaluatePath(path: string, context: ExpressionContext): unknown {
     }
   }
 
+  // Handle array membership: `arrayExpr includes itemExpr`
+  const includesMatch = trimmedPath.match(/^(.+?)\s+includes\s+(.+)$/);
+  if (includesMatch) {
+    const [, arrExpr, itemExpr] = includesMatch;
+    const arr = evaluatePath(arrExpr.trim(), context);
+    const item = parseValue(itemExpr.trim(), context);
+    return Array.isArray(arr) && arr.includes(item);
+  }
+
   // Handle logical operators
   if (trimmedPath.includes(' && ')) {
     const parts = trimmedPath.split(' && ');

@@ -157,7 +157,19 @@ export type ActionDefinition =
   | CloseModalAction
   | CustomAction
   | SequenceAction
-  | ConditionalAction;
+  | ConditionalAction
+  | ToggleArrayItemAction;
+
+/**
+ * Toggle membership of a value in a state array (add if absent, remove if present)
+ */
+export interface ToggleArrayItemAction {
+  action: 'toggleArrayItem';
+  /** State key holding the array */
+  key: string;
+  /** Value to toggle (expression) */
+  value: unknown;
+}
 
 /**
  * Update page state

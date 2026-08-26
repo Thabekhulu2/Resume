@@ -12,6 +12,7 @@ import {
   resolveProps,
   mergeContext,
 } from './ExpressionEvaluator';
+import { ItemContextProvider } from './UIEngineContext';
 import type { ComponentDefinition, ExpressionContext } from './types';
 
 interface ComponentRendererProps {
@@ -53,14 +54,19 @@ export function ComponentRenderer({
     return (
       <>
         {items.map((item, index) => {
-          // Create context with item and index
-          const itemContext = mergeContext(context, {
+          // Bindings introduced by this loop iteration (item/index/row plus
+          // the custom `as` name, e.g. `candidate`). Used both for resolving
+          // this render pass's props AND, via ItemContextProvider, so that
+          // actions dispatched later (onClick/onChange) can still resolve
+          // {{candidate.id}}-style references after the loop has returned.
+          const itemBindings: Partial<ExpressionContext> = {
             [itemKey]: item,
             [indexKey]: index,
             row: typeof item === 'object' ? item as Record<string, unknown> : undefined,
             item,
             index,
-          } as Partial<ExpressionContext>);
+          };
+          const itemContext = mergeContext(context, itemBindings);
 
           // Evaluate key for React reconciliation
           const key = definition.key
@@ -77,11 +83,12 @@ export function ComponentRenderer({
           };
 
           return (
-            <ComponentRenderer
-              key={key}
-              definition={itemDefinition}
-              context={itemContext}
-            />
+            <ItemContextProvider key={key} value={itemBindings}>
+              <ComponentRenderer
+                definition={itemDefinition}
+                context={itemContext}
+              />
+            </ItemContextProvider>
           );
         })}
       </>

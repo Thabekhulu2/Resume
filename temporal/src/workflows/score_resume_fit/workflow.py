@@ -37,6 +37,7 @@ class ScoreResumeFitWorkflow:
             )
 
             candidate_data = {
+                "name": score.name,
                 "resume_file_path": request.resume_storage_path,
                 "resume_text": resume_text,
                 "extracted": {

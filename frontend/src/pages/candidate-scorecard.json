@@ -65,6 +65,14 @@
               },
               {
                 "type": "Text",
+                "if": "{{data.candidate.entity_versions[0].data.name}}",
+                "props": {
+                  "weight": "medium",
+                  "children": "{{data.candidate.entity_versions[0].data.name}}"
+                }
+              },
+              {
+                "type": "Text",
                 "if": "{{data.job}}",
                 "props": {
                   "variant": "muted",

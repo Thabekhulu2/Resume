@@ -21,6 +21,7 @@ def fake_extract_resume_text(storage_path: str) -> str:
 @activity.defn(name="extract_and_score")
 def fake_extract_and_score(resume_text: str, jd_text: str) -> ScoreResult:
     return ScoreResult(
+        name="Jane Doe",
         skills=["Python", "SQL"],
         experience=[{"title": "Engineer", "company": "Acme", "duration": "2020-2023", "summary": "Built things"}],
         score=88.0,

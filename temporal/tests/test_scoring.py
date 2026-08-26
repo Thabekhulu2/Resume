@@ -8,6 +8,7 @@ from src.config import settings
 
 VALID_RESPONSE = json.dumps(
     {
+        "name": "Jane Doe",
         "skills": ["Python", "SQL"],
         "experience": [
             {"title": "Engineer", "company": "Acme", "duration": "2020-2023", "summary": "Built things"}
@@ -24,6 +25,7 @@ def test_extract_and_score_valid_response(monkeypatch):
 
     result = scoring.extract_and_score("resume text", "jd text")
 
+    assert result.name == "Jane Doe"
     assert result.score == 82.0
     assert result.skills == ["Python", "SQL"]
     assert result.experience[0]["title"] == "Engineer"
@@ -48,10 +50,11 @@ def test_extract_and_score_uses_local_llm_when_configured(monkeypatch):
     "raw_response",
     [
         "not json at all",
-        json.dumps({"skills": ["Python"], "experience": [], "score": "not a number", "reasoning": "x"}),
-        json.dumps({"skills": "not a list", "experience": [], "score": 50, "reasoning": "x"}),
-        json.dumps({"skills": [], "experience": ["missing required fields"], "score": 50, "reasoning": "x"}),
-        json.dumps({"skills": [], "experience": [], "score": 50}),
+        json.dumps({"name": "x", "skills": ["Python"], "experience": [], "score": "not a number", "reasoning": "x"}),
+        json.dumps({"name": "x", "skills": "not a list", "experience": [], "score": 50, "reasoning": "x"}),
+        json.dumps({"name": "x", "skills": [], "experience": ["missing required fields"], "score": 50, "reasoning": "x"}),
+        json.dumps({"name": "x", "skills": [], "experience": [], "score": 50}),
+        json.dumps({"name": 123, "skills": [], "experience": [], "score": 50, "reasoning": "x"}),
         json.dumps(["not", "an", "object"]),
     ],
 )

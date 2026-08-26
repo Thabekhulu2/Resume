@@ -101,7 +101,7 @@
                             "type": "Text",
                             "props": {
                               "weight": "medium",
-                              "children": "{{candidate.entity_versions[0].data.resume_file_path}}"
+                              "children": "{{candidate.entity_versions[0].data.name || candidate.entity_versions[0].data.resume_file_path}}"
                             }
                           },
                           {

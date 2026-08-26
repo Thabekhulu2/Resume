@@ -18,7 +18,7 @@ Job Description:
 {jd_text}
 
 Respond with ONLY a JSON object (no markdown, no commentary) matching this exact shape:
-{{"skills": ["string", ...], "experience": [{{"title": "string", "company": "string", "duration": "string", "summary": "string"}}, ...], "score": <number 0-100>, "reasoning": "string"}}
+{{"name": "string (the candidate's full name as it appears on the resume, or empty string if not found)", "skills": ["string", ...], "experience": [{{"title": "string", "company": "string", "duration": "string", "summary": "string"}}, ...], "score": <number 0-100>, "reasoning": "string"}}
 """
 
 EXPERIENCE_FIELDS = ("title", "company", "duration", "summary")
@@ -26,6 +26,7 @@ EXPERIENCE_FIELDS = ("title", "company", "duration", "summary")
 
 @dataclass
 class ScoreResult:
+    name: str
     skills: list[str]
     experience: list[dict[str, str]]
     score: float
@@ -69,11 +70,14 @@ def _validate_and_parse(raw_response: str) -> ScoreResult:
     if not isinstance(payload, dict):
         raise ValueError("LLM response JSON must be an object")
 
+    name = payload.get("name")
     skills = payload.get("skills")
     experience = payload.get("experience")
     score = payload.get("score")
     reasoning = payload.get("reasoning")
 
+    if not isinstance(name, str):
+        raise ValueError("LLM response 'name' must be a string")
     if not isinstance(skills, list) or not all(isinstance(item, str) for item in skills):
         raise ValueError("LLM response 'skills' must be a list of strings")
     if not isinstance(experience, list) or not all(
@@ -85,7 +89,7 @@ def _validate_and_parse(raw_response: str) -> ScoreResult:
     if not isinstance(reasoning, str):
         raise ValueError("LLM response 'reasoning' must be a string")
 
-    return ScoreResult(skills=skills, experience=experience, score=float(score), reasoning=reasoning)
+    return ScoreResult(name=name, skills=skills, experience=experience, score=float(score), reasoning=reasoning)
 
 
 @activity.defn

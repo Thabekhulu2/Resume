@@ -13,9 +13,9 @@ interface HeadingProps extends EngineComponentProps {
 
 const defaultSizeByLevel: Record<number, string> = {
   1: 'text-4xl font-bold tracking-tight',
-  2: 'text-3xl font-semibold tracking-tight',
-  3: 'text-2xl font-semibold',
-  4: 'text-xl font-semibold',
+  2: 'text-3xl font-bold tracking-tight',
+  3: 'text-2xl font-bold',
+  4: 'text-xl font-bold',
   5: 'text-lg font-medium',
   6: 'text-base font-medium',
 };
@@ -23,10 +23,10 @@ const defaultSizeByLevel: Record<number, string> = {
 const sizeMap: Record<string, string> = {
   sm: 'text-sm font-medium',
   md: 'text-base font-medium',
-  lg: 'text-lg font-semibold',
-  xl: 'text-xl font-semibold',
-  '2xl': 'text-2xl font-semibold',
-  '3xl': 'text-3xl font-semibold tracking-tight',
+  lg: 'text-lg font-bold',
+  xl: 'text-xl font-bold',
+  '2xl': 'text-2xl font-bold',
+  '3xl': 'text-3xl font-bold tracking-tight',
   '4xl': 'text-4xl font-bold tracking-tight',
 };
 

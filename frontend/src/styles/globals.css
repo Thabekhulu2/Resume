@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
+/* Adapt IT brand font — licensed files served from public/fonts.
+   Calibri/Open Sans/system-ui remain as fallbacks in --font-sans below,
+   per the Adapt IT Design System's own font stack (colors_and_type.css). */
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-Light.otf") format("opentype");
+}
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-Regular.otf") format("opentype");
+}
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-It.otf") format("opentype");
+}
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-Bold.otf") format("opentype");
+}
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-Black.otf") format("opentype");
+}
+
 @theme {
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(222.2 84% 4.9%);
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(222.2 84% 4.9%);
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(222.2 84% 4.9%);
-  --color-primary: hsl(222.2 47.4% 11.2%);
-  --color-primary-foreground: hsl(210 40% 98%);
-  --color-secondary: hsl(210 40% 96.1%);
-  --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
-  --color-muted: hsl(210 40% 96.1%);
-  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
-  --color-accent: hsl(210 40% 96.1%);
-  --color-accent-foreground: hsl(222.2 47.4% 11.2%);
-  --color-destructive: hsl(0 84.2% 60.2%);
-  --color-destructive-foreground: hsl(210 40% 98%);
-  --color-border: hsl(214.3 31.8% 91.4%);
-  --color-input: hsl(214.3 31.8% 91.4%);
-  --color-ring: hsl(222.2 84% 4.9%);
+  /* ==== Adapt IT palette, mapped onto shadcn's semantic slots ====
+     Source: Adapt IT Design System / colors_and_type.css (Brand Guide V2024.2) */
+  --color-background: #FFFFFF;          /* ai-white */
+  --color-foreground: #4C5056;          /* ai-cool-grey — body copy */
+  --color-card: #FFFFFF;
+  --color-card-foreground: #4C5056;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #4C5056;
+  --color-primary: #00A1ED;             /* ai-blue — links, primary CTA */
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #F4F5F5;           /* ai-cool-grey-10 */
+  --color-secondary-foreground: #003242;/* ai-dark-blue */
+  --color-muted: #F4F5F5;               /* ai-cool-grey-10 */
+  --color-muted-foreground: #A2A5AA;    /* ai-cool-grey-60 */
+  --color-accent: #E6F6FD;              /* light ai-blue tint, for hover/active surfaces */
+  --color-accent-foreground: #003242;   /* ai-dark-blue */
+  --color-destructive: #E82727;         /* ai-red — error states per brand guide's form spec */
+  --color-destructive-foreground: #FFFFFF;
+  --color-border: #ECECED;              /* ai-cool-grey-20 */
+  --color-input: #C9CACD;               /* ai-cool-grey-40 ("border-strong") */
+  --color-ring: rgb(0 161 237 / 0.30);  /* matches --shadow-focus in colors_and_type.css */
   --radius: 0.5rem;
+
+  /* Adapt IT's per-component radius scale (buttons/inputs 4px, cards 8px,
+     modals 14px) doesn't line up with Tailwind's defaults on its own, so the
+     scale itself is overridden here; components then pick the right bucket
+     (see button.tsx/input.tsx using rounded-sm, dialog.tsx using rounded-xl). */
+  --radius-sm: 4px;
+  --radius-xl: 14px;
+
+  --font-sans: "Myriad Pro", Calibri, "Open Sans", "Segoe UI", system-ui, sans-serif;
 }
 
 @layer base {
@@ -29,5 +79,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Adapt IT headings use Dark Blue (--fg-1 in the brand tokens), distinct
+     from the Cool Grey body copy color above. */
+  h1, h2, h3, h4, h5, h6 {
+    color: #003242;
   }
 }

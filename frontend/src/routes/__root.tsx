@@ -30,8 +30,9 @@ function RootComponent() {
 
 function Header() {
   return (
-    <header className="h-16 border-b bg-card flex items-center px-6">
-      <h1 className="text-xl font-semibold">Candidate Scoring</h1>
+    <header className="h-16 border-b bg-card flex items-center gap-3 px-6">
+      <img src="/brand/adapt-it-icon.png" alt="Adapt IT" className="h-8 w-8" />
+      <h1 className="text-xl font-bold">Candidate Scoring</h1>
     </header>
   );
 }

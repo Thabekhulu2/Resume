@@ -54,3 +54,7 @@
 - If a request needs multiple unrelated changes, create separate tickets rather
   than bundling them.
 - Always confirm what files are affected before committing, and list them if asked.
+- Any time new work requires opening a ticket — a new feature, additional work
+  on a feature whose ticket is already closed, or anything else not already
+  covered by an open ticket — explicitly tell the user a new ticket was opened
+  (number + title) as soon as it's created. Never open a ticket silently.

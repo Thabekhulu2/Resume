@@ -1,0 +1,218 @@
+{
+  "id": "candidate-scorecard",
+  "title": "Candidate Scorecard",
+  "dataSources": {
+    "candidate": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "*, entity_versions(*)",
+      "filters": [{ "field": "id", "op": "eq", "value": "{{params.id}}" }],
+      "single": true
+    },
+    "facts": {
+      "type": "supabase",
+      "table": "entity_facts",
+      "select": "*",
+      "filters": [{ "field": "entity_id", "op": "eq", "value": "{{params.id}}" }],
+      "order": [{ "column": "created_at", "ascending": false }],
+      "limit": 1
+    },
+    "relationships": {
+      "type": "supabase",
+      "table": "relationships_v2",
+      "select": "*",
+      "filters": [
+        { "field": "child_id", "op": "eq", "value": "{{params.id}}" },
+        { "field": "is_current", "op": "eq", "value": true }
+      ],
+      "order": [{ "column": "created_at", "ascending": false }],
+      "limit": 1
+    },
+    "job": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "*, entity_versions(*)",
+      "filters": [{ "field": "id", "op": "eq", "value": "{{data.relationships[0].parent_id}}" }],
+      "single": true,
+      "enabled": "{{data.relationships.length > 0}}"
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "direction": "horizontal", "justify": "between", "align": "start" },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 2 },
+            "children": [
+              {
+                "type": "Link",
+                "props": { "to": "/candidates/upload", "children": "Score another candidate" }
+              },
+              {
+                "type": "Heading",
+                "props": { "level": 1, "children": "Candidate Scorecard" }
+              },
+              {
+                "type": "Text",
+                "if": "{{data.job}}",
+                "props": {
+                  "variant": "muted",
+                  "children": "Scored against: {{data.job.entity_versions[0].data.title || 'Untitled role'}}"
+                }
+              }
+            ]
+          },
+          {
+            "type": "Button",
+            "props": {
+              "variant": "outline",
+              "children": "Refresh status",
+              "onClick": {
+                "action": "sequence",
+                "actions": [
+                  { "action": "refetch", "source": "candidate" },
+                  { "action": "refetch", "source": "facts" },
+                  { "action": "refetch", "source": "relationships" }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "Alert",
+        "if": "{{(data.candidate.entity_versions[0].data.status || 'scoring') === 'scoring'}}",
+        "props": {
+          "variant": "info",
+          "title": "Scoring in progress",
+          "description": "The candidate's resume is being extracted and scored against the job description. This can take a minute or two — click Refresh status to check again."
+        }
+      },
+      {
+        "type": "Alert",
+        "if": "{{data.candidate.entity_versions[0].data.status === 'failed'}}",
+        "props": {
+          "variant": "destructive",
+          "title": "Scoring failed",
+          "description": "{{data.candidate.entity_versions[0].data.error || 'Extraction or scoring failed. Try uploading again.'}}"
+        }
+      },
+      {
+        "type": "Grid",
+        "props": { "columns": 2, "gap": 6 },
+        "children": [
+          {
+            "type": "Card",
+            "props": { "title": "Resume" },
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "spacing": 4 },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "spacing": 1 },
+                    "children": [
+                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Extracted skills" } },
+                      {
+                        "type": "Stack",
+                        "props": { "direction": "horizontal", "spacing": 2, "className": "flex-wrap" },
+                        "children": [
+                          {
+                            "type": "Badge",
+                            "each": "{{data.candidate.entity_versions[0].data.extracted.skills}}",
+                            "as": "skill",
+                            "key": "{{skill}}",
+                            "props": { "variant": "secondary", "children": "{{skill}}" }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Text",
+                        "if": "{{!data.candidate.entity_versions[0].data.extracted}}",
+                        "props": { "variant": "muted", "size": "sm", "children": "Not yet extracted" }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "spacing": 2 },
+                    "children": [
+                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Experience" } },
+                      {
+                        "type": "Stack",
+                        "each": "{{data.candidate.entity_versions[0].data.extracted.experience}}",
+                        "as": "job",
+                        "key": "{{job.title}}-{{job.company}}",
+                        "props": { "spacing": 1, "className": "p-3 border rounded-lg" },
+                        "children": [
+                          {
+                            "type": "Text",
+                            "props": { "weight": "medium", "children": "{{job.title}} · {{job.company}}" }
+                          },
+                          {
+                            "type": "Text",
+                            "props": { "variant": "muted", "size": "sm", "children": "{{job.duration}}" }
+                          },
+                          {
+                            "type": "Text",
+                            "props": { "size": "sm", "children": "{{job.summary}}" }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Card",
+            "props": { "title": "Fit Score" },
+            "children": [
+              {
+                "type": "Stack",
+                "if": "{{data.facts.length > 0}}",
+                "props": { "spacing": 4 },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "align": "center", "spacing": 3 },
+                    "children": [
+                      {
+                        "type": "Heading",
+                        "props": { "level": 2, "children": "{{data.facts[0].value}}%" }
+                      },
+                      {
+                        "type": "Badge",
+                        "props": { "children": "JD Fit Score" }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "spacing": 1 },
+                    "children": [
+                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Reasoning" } },
+                      { "type": "Text", "props": { "children": "{{data.facts[0].metadata.reasoning}}" } }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Text",
+                "if": "{{data.facts.length === 0}}",
+                "props": { "variant": "muted", "children": "No score yet." }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

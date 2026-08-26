@@ -186,16 +186,20 @@ export interface NavigateAction {
  */
 export interface ApiCallAction {
   action: 'apiCall';
-  operation: 'insert' | 'update' | 'upsert' | 'delete' | 'rpc';
+  operation: 'insert' | 'update' | 'upsert' | 'delete' | 'rpc' | 'invoke' | 'upload';
   /** Table for CRUD operations */
   table?: string;
-  /** Function name for RPC */
+  /** Postgres function name for rpc, or Edge Function name for invoke */
   function?: string;
+  /** Storage bucket name, for upload */
+  bucket?: string;
+  /** Storage path, for upload (expression) */
+  path?: string;
   /** Data payload (expression) */
   data?: unknown;
   /** Match criteria for update/delete */
   match?: Record<string, unknown>;
-  /** Action to run on success */
+  /** Action to run on success (context.event.data holds the response payload) */
   onSuccess?: ActionDefinition;
   /** Action to run on error */
   onError?: ActionDefinition;

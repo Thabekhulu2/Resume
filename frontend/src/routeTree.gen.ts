@@ -10,12 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CandidatesUploadRouteImport } from './routes/candidates/upload'
+import { Route as CandidatesIdRouteImport } from './routes/candidates/$id'
 import { Route as EntitiesEntityTypeIndexRouteImport } from './routes/entities/$entityType/index'
 import { Route as EntitiesEntityTypeIdRouteImport } from './routes/entities/$entityType/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CandidatesUploadRoute = CandidatesUploadRouteImport.update({
+  id: '/candidates/upload',
+  path: '/candidates/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CandidatesIdRoute = CandidatesIdRouteImport.update({
+  id: '/candidates/$id',
+  path: '/candidates/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntitiesEntityTypeIndexRoute = EntitiesEntityTypeIndexRouteImport.update({
@@ -31,30 +43,54 @@ const EntitiesEntityTypeIdRoute = EntitiesEntityTypeIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/candidates/$id': typeof CandidatesIdRoute
+  '/candidates/upload': typeof CandidatesUploadRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof EntitiesEntityTypeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/candidates/$id': typeof CandidatesIdRoute
+  '/candidates/upload': typeof CandidatesUploadRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof EntitiesEntityTypeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/candidates/$id': typeof CandidatesIdRoute
+  '/candidates/upload': typeof CandidatesUploadRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType/': typeof EntitiesEntityTypeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/entities/$entityType/$id' | '/entities/$entityType'
+  fullPaths:
+    | '/'
+    | '/candidates/$id'
+    | '/candidates/upload'
+    | '/entities/$entityType/$id'
+    | '/entities/$entityType'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/entities/$entityType/$id' | '/entities/$entityType'
-  id: '__root__' | '/' | '/entities/$entityType/$id' | '/entities/$entityType/'
+  to:
+    | '/'
+    | '/candidates/$id'
+    | '/candidates/upload'
+    | '/entities/$entityType/$id'
+    | '/entities/$entityType'
+  id:
+    | '__root__'
+    | '/'
+    | '/candidates/$id'
+    | '/candidates/upload'
+    | '/entities/$entityType/$id'
+    | '/entities/$entityType/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CandidatesIdRoute: typeof CandidatesIdRoute
+  CandidatesUploadRoute: typeof CandidatesUploadRoute
   EntitiesEntityTypeIdRoute: typeof EntitiesEntityTypeIdRoute
   EntitiesEntityTypeIndexRoute: typeof EntitiesEntityTypeIndexRoute
 }
@@ -66,6 +102,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/candidates/upload': {
+      id: '/candidates/upload'
+      path: '/candidates/upload'
+      fullPath: '/candidates/upload'
+      preLoaderRoute: typeof CandidatesUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/candidates/$id': {
+      id: '/candidates/$id'
+      path: '/candidates/$id'
+      fullPath: '/candidates/$id'
+      preLoaderRoute: typeof CandidatesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entities/$entityType/': {
@@ -87,6 +137,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CandidatesIdRoute: CandidatesIdRoute,
+  CandidatesUploadRoute: CandidatesUploadRoute,
   EntitiesEntityTypeIdRoute: EntitiesEntityTypeIdRoute,
   EntitiesEntityTypeIndexRoute: EntitiesEntityTypeIndexRoute,
 }

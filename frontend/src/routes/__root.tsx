@@ -5,7 +5,7 @@
 import { createRootRoute, Outlet, Link, useLocation } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { cn } from '@/lib/utils';
-import { Home, Box, Users, Building2, FolderOpen, FileQuestion, ClipboardCheck, FileText, UserCircle, UsersRound } from 'lucide-react';
+import { Home, Box, Users, Building2, FolderOpen, FileQuestion, ClipboardCheck, FileText, UserCircle, UsersRound, UserPlus } from 'lucide-react';
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -74,6 +74,19 @@ function Sidebar() {
         >
           <Home className="h-4 w-4" />
           Dashboard
+        </Link>
+
+        <Link
+          to="/candidates/upload"
+          className={cn(
+            'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors',
+            location.pathname === '/candidates/upload'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-muted'
+          )}
+        >
+          <UserPlus className="h-4 w-4" />
+          Score a Candidate
         </Link>
 
         <div className="pt-4">

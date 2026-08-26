@@ -1,0 +1,164 @@
+{
+  "id": "candidate-upload",
+  "title": "Score a Candidate",
+  "state": {
+    "resumeFileName": "",
+    "resumeStoragePath": null,
+    "jdText": "",
+    "jobTitle": "",
+    "uploading": false,
+    "submitting": false,
+    "error": null
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Heading",
+        "props": { "level": 1, "children": "Score a Candidate" }
+      },
+      {
+        "type": "Alert",
+        "if": "{{state.error}}",
+        "props": {
+          "variant": "destructive",
+          "title": "Something went wrong",
+          "description": "{{state.error}}"
+        }
+      },
+      {
+        "type": "Card",
+        "props": { "title": "Resume" },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 4 },
+            "children": [
+              {
+                "type": "FileInput",
+                "props": {
+                  "label": "Resume file (PDF or DOCX)",
+                  "accept": ".pdf,.docx",
+                  "required": true,
+                  "onChange": {
+                    "action": "sequence",
+                    "actions": [
+                      { "action": "setState", "key": "error", "value": null },
+                      { "action": "setState", "key": "resumeFileName", "value": "{{event.fileName}}" },
+                      { "action": "setState", "key": "resumeStoragePath", "value": null },
+                      { "action": "setState", "key": "uploading", "value": true },
+                      {
+                        "action": "apiCall",
+                        "operation": "upload",
+                        "bucket": "resumes",
+                        "path": "{{event.path}}",
+                        "data": "{{event.file}}",
+                        "onSuccess": {
+                          "action": "sequence",
+                          "actions": [
+                            { "action": "setState", "key": "uploading", "value": false },
+                            { "action": "setState", "key": "resumeStoragePath", "value": "{{event.path}}" }
+                          ]
+                        },
+                        "onError": {
+                          "action": "sequence",
+                          "actions": [
+                            { "action": "setState", "key": "uploading", "value": false },
+                            { "action": "setState", "key": "error", "value": "Resume upload failed. Please try again." }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "Text",
+                "if": "{{state.resumeFileName}}",
+                "props": { "variant": "muted", "size": "sm", "children": "Selected: {{state.resumeFileName}}" }
+              },
+              {
+                "type": "Text",
+                "if": "{{state.uploading}}",
+                "props": { "variant": "muted", "size": "sm", "children": "Uploading resume..." }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Card",
+        "props": { "title": "Job Description" },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 4 },
+            "children": [
+              {
+                "type": "Input",
+                "props": {
+                  "label": "Job title",
+                  "value": "{{state.jobTitle}}",
+                  "onChange": { "action": "setState", "key": "jobTitle", "value": "{{event.target.value}}" }
+                }
+              },
+              {
+                "type": "Textarea",
+                "props": {
+                  "label": "Job description text",
+                  "required": true,
+                  "rows": 8,
+                  "value": "{{state.jdText}}",
+                  "onChange": { "action": "setState", "key": "jdText", "value": "{{event.target.value}}" }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Stack",
+        "props": { "direction": "horizontal", "justify": "end" },
+        "children": [
+          {
+            "type": "Button",
+            "props": {
+              "children": "Score candidate",
+              "loading": "{{state.submitting}}",
+              "disabled": "{{!state.resumeStoragePath || state.uploading || !state.jdText}}",
+              "onClick": {
+                "action": "sequence",
+                "actions": [
+                  { "action": "setState", "key": "error", "value": null },
+                  { "action": "setState", "key": "submitting", "value": true },
+                  {
+                    "action": "apiCall",
+                    "operation": "invoke",
+                    "function": "start-scoring-workflow",
+                    "data": {
+                      "resume_storage_path": "{{state.resumeStoragePath}}",
+                      "jd_text": "{{state.jdText}}",
+                      "job_title": "{{state.jobTitle}}"
+                    },
+                    "onSuccess": {
+                      "action": "navigate",
+                      "to": "/candidates/{{event.data.candidate_entity_id}}"
+                    },
+                    "onError": {
+                      "action": "sequence",
+                      "actions": [
+                        { "action": "setState", "key": "submitting", "value": false },
+                        { "action": "setState", "key": "error", "value": "Failed to start scoring. Please try again." }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

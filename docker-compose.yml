@@ -78,6 +78,10 @@ services:
       - TEMPORAL_TASK_QUEUE=${TEMPORAL_TASK_QUEUE:-main}
       - SUPABASE_URL=${SUPABASE_URL:-http://host.docker.internal:55321}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-dev-service-role-key}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - USE_LOCAL_LLM=${USE_LOCAL_LLM:-0}
+      - RESUMES_STORAGE_BUCKET=${RESUMES_STORAGE_BUCKET:-resumes}
+      - HTTP_TRIGGER_PORT=${HTTP_TRIGGER_PORT:-8001}
 
   frontend:
     build:

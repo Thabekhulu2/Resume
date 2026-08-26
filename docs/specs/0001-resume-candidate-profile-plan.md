@@ -30,45 +30,45 @@ This is a plan-level addition beyond what the spec fixed — flagging it explici
 
 The existing `temporal/src/activities/supabase_core.py` activities are stubs that return mock data — they don't write anywhere yet. This phase makes them real before building the new feature on top of them.
 
-- [ ] Wire a real Supabase client (service-role key, from worker env/settings) into `temporal/src/activities/supabase_core.py`
-- [ ] Implement `create_entity`, `update_entity_scd2`, `get_entity`, `create_relationship` against the real `entities`/`entity_versions`/`relationships_v2` tables (replacing the `[STUB]`-logged mock returns)
-- [ ] Leave `append_event`/`notifications.py` as-is unless the workflow needs them (not required by the spec)
+- [x] Wire a real Supabase client (service-role key, from worker env/settings) into `temporal/src/activities/supabase_core.py`
+- [x] Implement `create_entity`, `update_entity_scd2`, `get_entity`, `create_relationship` against the real `entities`/`entity_versions`/`relationships_v2` tables (replacing the `[STUB]`-logged mock returns)
+- [x] Leave `append_event`/`notifications.py` as-is unless the workflow needs them (not required by the spec)
 
 ## Phase 3: Resume text extraction activity
 
-- [ ] New activity `extract_resume_text(storage_path: str) -> str` in a new `temporal/src/activities/resume_parsing.py`: downloads the file from the `resumes` Storage bucket, extracts plain text via `pypdf` (PDF) or `python-docx` (DOCX), raises a clear error for unsupported formats (per spec's risk mitigation — no silent degradation)
+- [x] New activity `extract_resume_text(storage_path: str) -> str` in a new `temporal/src/activities/resume_parsing.py`: downloads the file from the `resumes` Storage bucket, extracts plain text via `pypdf` (PDF) or `python-docx` (DOCX), raises a clear error for unsupported formats (per spec's risk mitigation — no silent degradation)
 
 ## Phase 4: Extraction + scoring activity
 
-- [ ] New activity `extract_and_score(resume_text: str, jd_text: str) -> ScoreResult` in `temporal/src/activities/scoring.py`: calls Anthropic Claude (or local Ollama when `USE_LOCAL_LLM` env flag is set, per the temporary local-test-patch convention) with a prompt that returns structured JSON: `{ skills: [...], experience: [...], score: number, reasoning: string }`
-- [ ] Validate the LLM's JSON response against the expected shape before returning (per Guide §10.2 and the spec's top risk); raise on malformed output rather than persisting garbage
+- [x] New activity `extract_and_score(resume_text: str, jd_text: str) -> ScoreResult` in `temporal/src/activities/scoring.py`: calls Anthropic Claude (or local Ollama when `USE_LOCAL_LLM` env flag is set, per the temporary local-test-patch convention) with a prompt that returns structured JSON: `{ skills: [...], experience: [...], score: number, reasoning: string }`
+- [x] Validate the LLM's JSON response against the expected shape before returning (per Guide §10.2 and the spec's top risk); raise on malformed output rather than persisting garbage
 
 ## Phase 5: Workflow
 
-- [ ] New workflow `ScoreResumeFitWorkflow` in `temporal/src/workflows/score_resume_fit/workflow.py`, following the existing `ApprovalWorkflow` pattern:
+- [x] New workflow `ScoreResumeFitWorkflow` in `temporal/src/workflows/score_resume_fit/workflow.py`, following the existing `ApprovalWorkflow` pattern:
   1. `extract_resume_text` activity
   2. `extract_and_score` activity
   3. `create_entity`/`update_entity_scd2` — persist candidate `entity_versions.data` (resume text + extracted skills/experience)
   4. `create_relationship` — `relationship_type = 'candidate_scored_against_job'`, parent=job entity, child=candidate entity (per spec's assumed direction)
   5. New activity `upsert_entity_fact` (extends `supabase_core.py`) — writes `entity_facts` row (`fact_type='jd_fit_score'`, numeric `value`, `metadata.reasoning`)
-- [ ] Register the workflow + all new activities in `temporal/src/worker.py`
+- [x] Register the workflow + all new activities in `temporal/src/worker.py`
 
 ## Phase 6: Trigger endpoint + Edge Function
 
-- [ ] `temporal/src/http_trigger.py`: minimal HTTP server (co-located with the worker process) exposing `POST /start-scoring` — starts `ScoreResumeFitWorkflow`, returns the Temporal workflow ID
-- [ ] `supabase/functions/start-scoring-workflow/index.ts`: accepts `{ candidate_entity_id | resume_upload, job_description_entity_id | jd_text }`, ensures the candidate/job entities + resume upload exist in Supabase, then POSTs to the worker's `/start-scoring` endpoint
+- [x] `temporal/src/http_trigger.py`: minimal HTTP server (co-located with the worker process) exposing `POST /start-scoring` — starts `ScoreResumeFitWorkflow`, returns the Temporal workflow ID
+- [x] `supabase/functions/start-scoring-workflow/index.ts`: accepts `{ candidate_entity_id | resume_upload, job_description_entity_id | jd_text }`, ensures the candidate/job entities + resume upload exist in Supabase, then POSTs to the worker's `/start-scoring` endpoint
 
 ## Phase 7: Frontend
 
-- [ ] New page JSON `frontend/src/pages/candidate-upload.json`: resume file input + JD text input, submit calls the `start-scoring-workflow` Edge Function (following the existing `apiCall`/JSON-engine action pattern used in `entity-detail.json`)
-- [ ] New page JSON `frontend/src/pages/candidate-scorecard.json` (or extend `entity-detail.json` for `entityType = candidate`): shows resume + polls/refetches the candidate's `entity_facts` for `jd_fit_score`, rendering score + reasoning; distinct "scoring in progress" vs. "failed" vs. "scored" states per the spec's UX requirement
-- [ ] Wire new routes under `frontend/src/routes/` following the existing `entities/$entityType/...` pattern
+- [x] New page JSON `frontend/src/pages/candidate-upload.json`: resume file input + JD text input, submit calls the `start-scoring-workflow` Edge Function (following the existing `apiCall`/JSON-engine action pattern used in `entity-detail.json`)
+- [x] New page JSON `frontend/src/pages/candidate-scorecard.json` (or extend `entity-detail.json` for `entityType = candidate`): shows resume + polls/refetches the candidate's `entity_facts` for `jd_fit_score`, rendering score + reasoning; distinct "scoring in progress" vs. "failed" vs. "scored" states per the spec's UX requirement
+- [x] Wire new routes under `frontend/src/routes/` following the existing `entities/$entityType/...` pattern
 
 ## Phase 8: Tests
 
-- [ ] Unit tests (`temporal/tests/`): `resume_parsing` (PDF/DOCX fixtures), `scoring` (mocked LLM response, including a malformed-JSON case), persistence activities (mocked Supabase client)
-- [ ] Integration test: `ScoreResumeFitWorkflow` end-to-end against a local worker with `USE_LOCAL_LLM` set (no paid API key required)
-- [ ] E2E test: upload → scorecard renders score + reasoning, using the local LLM substitute
+- [x] Unit tests (`temporal/tests/`): `resume_parsing` (PDF/DOCX fixtures), `scoring` (mocked LLM response, including a malformed-JSON case), persistence activities (mocked Supabase client)
+- [x] Integration test: `ScoreResumeFitWorkflow` end-to-end against a local worker with mocked activities (see note below on `USE_LOCAL_LLM`)
+- [ ] E2E test: upload → scorecard renders score + reasoning, using the local LLM substitute — **not done**: requires a running Supabase + Temporal worker + frontend stack (Docker daemon isn't running in this environment) plus a browser-automation tool, neither available this session
 
 ## Out of scope for this plan (per spec's Non-Goals / ADR's Neutral consequences)
 

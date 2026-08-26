@@ -38,6 +38,9 @@ temporal/worker/dist
 temporal/worker/node_modules.bak*
 **/node_modules.bak*
 *.swp
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 
 volaris_test_data-main
 

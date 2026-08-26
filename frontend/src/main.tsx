@@ -50,7 +50,7 @@ if (root) {
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
       </QueryClientProvider>
     </React.StrictMode>
   );

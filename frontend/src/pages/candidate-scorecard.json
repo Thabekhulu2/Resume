@@ -92,7 +92,7 @@
       },
       {
         "type": "Alert",
-        "if": "{{(data.candidate.entity_versions[0].data.status || 'scoring') === 'scoring'}}",
+        "if": "{{data.candidate.entity_versions[0].data.status === 'scoring'}}",
         "props": {
           "variant": "info",
           "title": "Scoring in progress",

@@ -185,9 +185,13 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
         queryClient.invalidateQueries({ queryKey: ['datasource'] });
       }
 
-      // Execute onSuccess action (response payload available as event.data)
+      // Execute onSuccess action (response payload available as event.data;
+      // preserves any event fields already in context, e.g. from FileInput)
       if (action.onSuccess) {
-        await dispatch(action.onSuccess, { ...context, event: { data: result.data } });
+        await dispatch(action.onSuccess, {
+          ...context,
+          event: { ...(context.event as object | undefined), data: result.data },
+        });
       }
     } catch (error) {
       console.error('API call failed:', error);
@@ -196,7 +200,7 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
       if (action.onError) {
         await dispatch(action.onError, {
           ...context,
-          event: { error },
+          event: { ...(context.event as object | undefined), error },
         });
       } else {
         throw error;

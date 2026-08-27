@@ -158,7 +158,26 @@ export type ActionDefinition =
   | CustomAction
   | SequenceAction
   | ConditionalAction
-  | ToggleArrayItemAction;
+  | ToggleArrayItemAction
+  | ForEachAction;
+
+/**
+ * Run an action once per item of an array, sequentially. Stops at the first
+ * item whose action throws (matching apiCall's onSuccess/onError convention).
+ */
+export interface ForEachAction {
+  action: 'forEach';
+  /** Expression resolving to the array to iterate */
+  items: unknown;
+  /** Variable name bound to the current item (like ComponentDefinition's `as`) */
+  as: string;
+  /** Action to run for each item */
+  do: ActionDefinition;
+  /** Action to run once, after every item completes without error */
+  onSuccess?: ActionDefinition;
+  /** Action to run once, if any item's action throws (context.event.error holds it); stops iteration */
+  onError?: ActionDefinition;
+}
 
 /**
  * Toggle membership of a value in a state array (add if absent, remove if present)

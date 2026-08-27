@@ -2,8 +2,11 @@
   "id": "candidate-upload",
   "title": "Score a Candidate",
   "state": {
+    "bulkMode": false,
     "resumeFileName": "",
     "resumeStoragePath": null,
+    "resumeFiles": [],
+    "resumeStoragePaths": [],
     "jdText": "",
     "jobTitle": "",
     "uploading": false,
@@ -17,6 +20,24 @@
       {
         "type": "Heading",
         "props": { "level": 1, "children": "Score a Candidate" }
+      },
+      {
+        "type": "Checkbox",
+        "props": {
+          "label": "Score multiple candidates against this job description",
+          "checked": "{{state.bulkMode}}",
+          "onChange": {
+            "action": "sequence",
+            "actions": [
+              { "action": "setState", "key": "bulkMode", "value": "{{event.target.checked}}" },
+              { "action": "setState", "key": "error", "value": null },
+              { "action": "setState", "key": "resumeFileName", "value": "" },
+              { "action": "setState", "key": "resumeStoragePath", "value": null },
+              { "action": "setState", "key": "resumeFiles", "value": [] },
+              { "action": "setState", "key": "resumeStoragePaths", "value": [] }
+            ]
+          }
+        }
       },
       {
         "type": "Alert",
@@ -34,6 +55,7 @@
           {
             "type": "Stack",
             "props": { "spacing": 4 },
+            "if": "{{!state.bulkMode}}",
             "children": [
               {
                 "type": "FileInput",
@@ -84,6 +106,35 @@
                 "props": { "variant": "muted", "size": "sm", "children": "Uploading resume..." }
               }
             ]
+          },
+          {
+            "type": "Stack",
+            "props": { "spacing": 4 },
+            "if": "{{state.bulkMode}}",
+            "children": [
+              {
+                "type": "FileInput",
+                "props": {
+                  "label": "Resume files (PDF or DOCX)",
+                  "accept": ".pdf,.docx",
+                  "multiple": true,
+                  "required": true,
+                  "onChange": {
+                    "action": "sequence",
+                    "actions": [
+                      { "action": "setState", "key": "error", "value": null },
+                      { "action": "setState", "key": "resumeFiles", "value": "{{event.files}}" },
+                      { "action": "setState", "key": "resumeStoragePaths", "value": "{{event.paths}}" }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "Text",
+                "if": "{{state.resumeFiles.length}}",
+                "props": { "variant": "muted", "size": "sm", "children": "{{state.resumeFiles.length}} file(s) selected" }
+              }
+            ]
           }
         ]
       },
@@ -123,6 +174,7 @@
         "children": [
           {
             "type": "Button",
+            "if": "{{!state.bulkMode}}",
             "props": {
               "children": "Score candidate",
               "loading": "{{state.submitting}}",
@@ -151,6 +203,62 @@
                         { "action": "setState", "key": "submitting", "value": false },
                         { "action": "setState", "key": "error", "value": "Failed to start scoring. Please try again." }
                       ]
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "Button",
+            "if": "{{state.bulkMode}}",
+            "props": {
+              "children": "Score {{state.resumeFiles.length}} candidates",
+              "loading": "{{state.submitting}}",
+              "disabled": "{{!state.resumeFiles.length || state.submitting || !state.jdText}}",
+              "onClick": {
+                "action": "sequence",
+                "actions": [
+                  { "action": "setState", "key": "error", "value": null },
+                  { "action": "setState", "key": "submitting", "value": true },
+                  {
+                    "action": "forEach",
+                    "items": "{{state.resumeFiles}}",
+                    "as": "resumeFile",
+                    "do": {
+                      "action": "apiCall",
+                      "operation": "upload",
+                      "bucket": "resumes",
+                      "path": "{{resumeFile.path}}",
+                      "data": "{{resumeFile.file}}"
+                    },
+                    "onError": {
+                      "action": "sequence",
+                      "actions": [
+                        { "action": "setState", "key": "submitting", "value": false },
+                        { "action": "setState", "key": "error", "value": "Failed to upload one of the resumes. Please try again." }
+                      ]
+                    },
+                    "onSuccess": {
+                      "action": "apiCall",
+                      "operation": "invoke",
+                      "function": "start-scoring-workflow",
+                      "data": {
+                        "resume_storage_paths": "{{state.resumeStoragePaths}}",
+                        "jd_text": "{{state.jdText}}",
+                        "job_title": "{{state.jobTitle}}"
+                      },
+                      "onSuccess": {
+                        "action": "navigate",
+                        "to": "/candidates"
+                      },
+                      "onError": {
+                        "action": "sequence",
+                        "actions": [
+                          { "action": "setState", "key": "submitting", "value": false },
+                          { "action": "setState", "key": "error", "value": "Failed to start scoring. Please try again." }
+                        ]
+                      }
                     }
                   }
                 ]

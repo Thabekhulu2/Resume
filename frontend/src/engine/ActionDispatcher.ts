@@ -19,6 +19,7 @@ import type {
   SequenceAction,
   ConditionalAction,
   ToggleArrayItemAction,
+  ForEachAction,
   ExpressionContext,
 } from './types';
 import { evaluateExpression, resolveValue } from './ExpressionEvaluator';
@@ -97,6 +98,9 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
 
       case 'toggleArrayItem':
         return handleToggleArrayItem(action, context);
+
+      case 'forEach':
+        return handleForEach(action, context);
 
       default:
         console.warn(`Unknown action type: ${(action as { action: string }).action}`);
@@ -290,6 +294,38 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
   ): Promise<void> {
     for (const subAction of action.actions) {
       await dispatch(subAction, context);
+    }
+  }
+
+  /**
+   * Handle forEach action (run an action once per array item, sequentially;
+   * stops and runs onError at the first failing item, matching apiCall's
+   * onSuccess/onError convention)
+   */
+  async function handleForEach(
+    action: ForEachAction,
+    context: ExpressionContext
+  ): Promise<void> {
+    const items = resolveValue(action.items, context);
+    if (!Array.isArray(items)) return;
+
+    try {
+      for (const item of items) {
+        await dispatch(action.do, { ...context, [action.as]: item });
+      }
+    } catch (error) {
+      if (action.onError) {
+        await dispatch(action.onError, {
+          ...context,
+          event: { ...(context.event as object | undefined), error },
+        });
+        return;
+      }
+      throw error;
+    }
+
+    if (action.onSuccess) {
+      await dispatch(action.onSuccess, context);
     }
   }
 

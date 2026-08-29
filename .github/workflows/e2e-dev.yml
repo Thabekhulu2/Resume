@@ -94,7 +94,7 @@ jobs:
       - name: File / update incident on failure
         if: failure()
         env:
-          GH_TOKEN: ${{ secrets.PROJECT_MANAGER_PAT }}
+          GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |

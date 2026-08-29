@@ -4,7 +4,7 @@
 > run regenerates this branch. The machine-readable source of truth is [`runs.jsonl`](./runs.jsonl).
 > Deployed-environment E2E trends live separately on the [`e2e-history`](../../tree/e2e-history) branch.
 
-**Last updated:** 2026-08-26 13:49Z · 23 records · suites: `helm`, `seed`, `temporal`
+**Last updated:** 2026-08-29 15:42Z · 26 records · suites: `helm`, `seed`, `temporal`
 
 ![trend](./trend.svg)
 
@@ -12,15 +12,16 @@
 
 | Suite | Latest | When (UTC) | Pass 24h | Pass 7d | Green streak | Runs |
 |---|---|---|--:|--:|--:|--:|
-| `helm` | ❌ `failed` [↗](https://github.com/Thabekhulu2/Resume/actions/runs/32976493899) | — | — | — | 0 | 8 |
-| `seed` | ❌ `failed` [↗](https://github.com/Thabekhulu2/Resume/actions/runs/32976493899) | — | — | — | 0 | 8 |
-| `temporal` | ✅ `passed` [↗](https://github.com/Thabekhulu2/Resume/actions/runs/32976493899) | 2026-08-26 13:49Z | 100% (7) | 100% (7) | 7 | 7 |
+| `helm` | ❌ `failed` [↗](https://github.com/Thabekhulu2/Resume/actions/runs/33260986702) | — | — | — | 0 | 9 |
+| `seed` | ❌ `failed` [↗](https://github.com/Thabekhulu2/Resume/actions/runs/33260986702) | — | — | — | 0 | 9 |
+| `temporal` | ✅ `passed` [↗](https://github.com/Thabekhulu2/Resume/actions/runs/33260986702) | 2026-08-29 15:42Z | 100% (1) | 100% (8) | 8 | 8 |
 
 
 ## Recent runs
 
 | When (UTC) | Suite | Result | Pass | Fail | Skip | Duration | Commit | Run |
 |---|---|---|--:|--:|--:|--:|---|---|
+| 2026-08-29 15:42Z | `temporal` | ✅ passed | 20 | 0 | 0 | 1.8s | `c990a11` | [#9](https://github.com/Thabekhulu2/Resume/actions/runs/33260986702) |
 | 2026-08-26 13:49Z | `temporal` | ✅ passed | 20 | 0 | 0 | 2.1s | `05703ba` | [#8](https://github.com/Thabekhulu2/Resume/actions/runs/32976493899) |
 | 2026-08-26 11:31Z | `temporal` | ✅ passed | 20 | 0 | 0 | 1.8s | `783e905` | [#7](https://github.com/Thabekhulu2/Resume/actions/runs/32963724868) |
 | 2026-08-26 09:51Z | `temporal` | ✅ passed | 19 | 0 | 0 | 2.7s | `c304e64` | [#6](https://github.com/Thabekhulu2/Resume/actions/runs/32955115536) |
@@ -28,6 +29,8 @@
 | 2026-08-26 08:42Z | `temporal` | ✅ passed | 19 | 0 | 0 | 1.9s | `1ac7bae` | [#4](https://github.com/Thabekhulu2/Resume/actions/runs/32949086855) |
 | 2026-08-26 08:34Z | `temporal` | ✅ passed | 19 | 0 | 0 | 2.2s | `275b49b` | [#3](https://github.com/Thabekhulu2/Resume/actions/runs/32948385747) |
 | 2026-08-26 07:46Z | `temporal` | ✅ passed | 19 | 0 | 0 | 2.1s | `91837bd` | [#2](https://github.com/Thabekhulu2/Resume/actions/runs/32944329314) |
+| — | `seed` | ❌ failed | 0 | 1 | 0 | — | `c990a11` | [#9](https://github.com/Thabekhulu2/Resume/actions/runs/33260986702) |
+| — | `helm` | ❌ failed | 151 | 2 | 0 | — | `c990a11` | [#9](https://github.com/Thabekhulu2/Resume/actions/runs/33260986702) |
 | — | `seed` | ❌ failed | 0 | 1 | 0 | — | `05703ba` | [#8](https://github.com/Thabekhulu2/Resume/actions/runs/32976493899) |
 | — | `helm` | ❌ failed | 151 | 2 | 0 | — | `05703ba` | [#8](https://github.com/Thabekhulu2/Resume/actions/runs/32976493899) |
 | — | `seed` | ❌ failed | 0 | 1 | 0 | — | `783e905` | [#7](https://github.com/Thabekhulu2/Resume/actions/runs/32963724868) |
@@ -38,9 +41,6 @@
 | — | `helm` | ❌ failed | 151 | 2 | 0 | — | `25d513c` | [#5](https://github.com/Thabekhulu2/Resume/actions/runs/32954142717) |
 | — | `seed` | ❌ failed | 0 | 1 | 0 | — | `1ac7bae` | [#4](https://github.com/Thabekhulu2/Resume/actions/runs/32949086855) |
 | — | `helm` | ❌ failed | 151 | 2 | 0 | — | `1ac7bae` | [#4](https://github.com/Thabekhulu2/Resume/actions/runs/32949086855) |
-| — | `seed` | ❌ failed | 0 | 1 | 0 | — | `275b49b` | [#3](https://github.com/Thabekhulu2/Resume/actions/runs/32948385747) |
-| — | `helm` | ❌ failed | 151 | 2 | 0 | — | `275b49b` | [#3](https://github.com/Thabekhulu2/Resume/actions/runs/32948385747) |
-| — | `seed` | ❌ failed | 0 | 1 | 0 | — | `91837bd` | [#2](https://github.com/Thabekhulu2/Resume/actions/runs/32944329314) |
 
 
 ## Unstable tests (recent window)

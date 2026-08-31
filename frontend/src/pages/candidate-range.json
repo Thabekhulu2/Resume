@@ -1,0 +1,79 @@
+{
+  "id": "candidate-range",
+  "title": "Candidates by fit score",
+  "state": {},
+  "dataSources": {
+    "candidates": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "*, entity_versions!inner(*), entity_facts!inner(value)",
+      "filters": [
+        { "field": "entity_type", "op": "eq", "value": "candidate" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true },
+        { "field": "entity_facts.value", "op": "gte", "value": "{{params.min}}" },
+        { "field": "entity_facts.value", "op": "lte", "value": "{{params.max}}" }
+      ],
+      "order": [{ "column": "created_at", "ascending": false }]
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "spacing": 1 },
+        "children": [
+          {
+            "type": "Heading",
+            "props": { "level": 1, "children": "{{params.min}}-{{params.max}} fit score" }
+          },
+          {
+            "type": "Link",
+            "props": { "to": "/", "children": "Back to Dashboard" }
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "if": "{{data.candidates.length === 0}}",
+        "props": { "variant": "muted", "children": "No candidates in this range." }
+      },
+      {
+        "type": "Stack",
+        "props": { "spacing": 3 },
+        "children": [
+          {
+            "type": "Card",
+            "each": "{{data.candidates}}",
+            "as": "candidate",
+            "key": "{{candidate.id}}",
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "direction": "horizontal", "justify": "between", "align": "center" },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "weight": "medium",
+                      "children": "{{candidate.entity_versions[0].data.name || candidate.entity_versions[0].data.resume_file_path}}"
+                    }
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 3, "align": "center" },
+                    "children": [
+                      { "type": "Text", "props": { "weight": "semibold", "children": "{{candidate.entity_facts[0].value}}%" } },
+                      { "type": "Link", "props": { "to": "/candidates/{{candidate.id}}", "children": "View" } }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

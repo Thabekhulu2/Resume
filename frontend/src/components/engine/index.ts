@@ -31,3 +31,4 @@ export { EngineSkeleton as Skeleton } from './feedback/EngineSkeleton';
 
 // Data
 export { EngineBadge as Badge } from './data/EngineBadge';
+export { EngineIcon as Icon } from './data/EngineIcon';

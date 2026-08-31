@@ -2,6 +2,43 @@
   "id": "dashboard",
   "title": "Dashboard",
   "state": {},
+  "dataSources": {
+    "strongCandidates": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "*, entity_versions!inner(*), entity_facts!inner(value)",
+      "filters": [
+        { "field": "entity_type", "op": "eq", "value": "candidate" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true },
+        { "field": "entity_facts.value", "op": "gte", "value": 70 }
+      ],
+      "order": [{ "column": "created_at", "ascending": false }]
+    },
+    "potentialCandidates": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "*, entity_versions!inner(*), entity_facts!inner(value)",
+      "filters": [
+        { "field": "entity_type", "op": "eq", "value": "candidate" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true },
+        { "field": "entity_facts.value", "op": "gte", "value": 50 },
+        { "field": "entity_facts.value", "op": "lte", "value": 69 }
+      ],
+      "order": [{ "column": "created_at", "ascending": false }]
+    },
+    "weakCandidates": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "*, entity_versions!inner(*), entity_facts!inner(value)",
+      "filters": [
+        { "field": "entity_type", "op": "eq", "value": "candidate" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true },
+        { "field": "entity_facts.value", "op": "gte", "value": 0 },
+        { "field": "entity_facts.value", "op": "lte", "value": 49 }
+      ],
+      "order": [{ "column": "created_at", "ascending": false }]
+    }
+  },
   "layout": {
     "type": "Stack",
     "props": { "spacing": 6 },
@@ -24,54 +61,169 @@
         ]
       },
       {
-        "type": "Card",
-        "props": {
-          "title": "Score a candidate",
-          "description": "Upload a resume and a job description to get a fit score with reasoning"
-        },
+        "type": "Grid",
+        "props": { "columns": 3, "gap": 4 },
         "children": [
           {
-            "type": "Stack",
-            "props": { "spacing": 3 },
+            "type": "Card",
+            "props": { "className": "border-l-4 border-l-primary bg-primary/5", "contentClassName": "py-8" },
             "children": [
-              {
-                "type": "Text",
-                "props": {
-                  "children": "A resume is extracted for skills and experience, scored against the job description by an LLM, and persisted so you can revisit it later."
-                }
-              },
               {
                 "type": "Link",
                 "props": {
-                  "to": "/candidates/upload",
-                  "children": "Score a candidate"
-                }
+                  "to": "/candidates/range/70/100",
+                  "className": "block no-underline text-inherit hover:no-underline"
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 4, "align": "center" },
+                    "children": [
+                      { "type": "Icon", "props": { "name": "target", "className": "w-14 h-14 bg-primary", "iconClassName": "w-7 h-7" } },
+                      {
+                        "type": "Stack",
+                        "props": { "spacing": 1 },
+                        "children": [
+                          { "type": "Text", "props": { "weight": "semibold", "children": "Strong match (70-100)" } },
+                          { "type": "Text", "props": { "variant": "primary", "weight": "bold", "className": "text-3xl", "children": "{{data.strongCandidates.length}}" } }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Card",
+            "props": { "className": "border-l-4 border-l-amber-500 bg-amber-50", "contentClassName": "py-8" },
+            "children": [
+              {
+                "type": "Link",
+                "props": {
+                  "to": "/candidates/range/50/69",
+                  "className": "block no-underline text-inherit hover:no-underline"
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 4, "align": "center" },
+                    "children": [
+                      { "type": "Icon", "props": { "name": "trending-up", "className": "w-14 h-14 bg-amber-500", "iconClassName": "w-7 h-7" } },
+                      {
+                        "type": "Stack",
+                        "props": { "spacing": 1 },
+                        "children": [
+                          { "type": "Text", "props": { "weight": "semibold", "children": "Potential match (50-69)" } },
+                          { "type": "Text", "props": { "weight": "bold", "className": "text-3xl text-amber-600", "children": "{{data.potentialCandidates.length}}" } }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Card",
+            "props": { "className": "border-l-4 border-l-destructive bg-destructive/5", "contentClassName": "py-8" },
+            "children": [
+              {
+                "type": "Link",
+                "props": {
+                  "to": "/candidates/range/0/49",
+                  "className": "block no-underline text-inherit hover:no-underline"
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 4, "align": "center" },
+                    "children": [
+                      { "type": "Icon", "props": { "name": "trending-down", "className": "w-14 h-14 bg-destructive", "iconClassName": "w-7 h-7" } },
+                      {
+                        "type": "Stack",
+                        "props": { "spacing": 1 },
+                        "children": [
+                          { "type": "Text", "props": { "weight": "semibold", "children": "Weak match (0-49)" } },
+                          { "type": "Text", "props": { "variant": "destructive", "weight": "bold", "className": "text-3xl", "children": "{{data.weakCandidates.length}}" } }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           }
         ]
       },
       {
-        "type": "Card",
-        "props": {
-          "title": "How it works"
-        },
+        "type": "Grid",
+        "props": { "columns": 2, "gap": 4 },
         "children": [
           {
-            "type": "Stack",
-            "props": { "spacing": 2 },
+            "type": "Card",
+            "props": {
+              "title": "Score a candidate",
+              "description": "Upload a resume and a job description to get a fit score with reasoning"
+            },
             "children": [
               {
-                "type": "Text",
-                "props": { "children": "1. Upload a resume (PDF or DOCX) and paste the job description text." }
-              },
+                "type": "Stack",
+                "props": { "spacing": 3 },
+                "children": [
+                  {
+                    "type": "Text",
+                    "props": {
+                      "children": "A resume is extracted for skills and experience, scored against the job description by an LLM, and persisted so you can revisit it later."
+                    }
+                  },
+                  {
+                    "type": "Link",
+                    "props": {
+                      "to": "/candidates/upload",
+                      "className": "inline-flex items-center gap-2 rounded-md border border-primary px-4 py-2 font-semibold text-primary no-underline hover:bg-accent hover:no-underline w-fit",
+                      "children": "Score a candidate →"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Card",
+            "props": {
+              "title": "How it works"
+            },
+            "children": [
               {
-                "type": "Text",
-                "props": { "children": "2. The resume is extracted and scored against the job description." }
-              },
-              {
-                "type": "Text",
-                "props": { "children": "3. The scorecard shows the fit score, reasoning, and extracted skills/experience." }
+                "type": "Stack",
+                "props": { "spacing": 4 },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 3, "align": "start" },
+                    "children": [
+                      { "type": "Badge", "props": { "className": "h-6 w-6 shrink-0 rounded-full !p-0 flex items-center justify-center border-0 bg-accent text-primary", "children": "1" } },
+                      { "type": "Text", "props": { "children": "Upload a resume (PDF or DOCX) and paste the job description text." } }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 3, "align": "start" },
+                    "children": [
+                      { "type": "Badge", "props": { "className": "h-6 w-6 shrink-0 rounded-full !p-0 flex items-center justify-center border-0 bg-accent text-primary", "children": "2" } },
+                      { "type": "Text", "props": { "children": "The resume is extracted and scored against the job description." } }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 3, "align": "start" },
+                    "children": [
+                      { "type": "Badge", "props": { "className": "h-6 w-6 shrink-0 rounded-full !p-0 flex items-center justify-center border-0 bg-accent text-primary", "children": "3" } },
+                      { "type": "Text", "props": { "children": "The scorecard shows the fit score, reasoning, and extracted skills/experience." } }
+                    ]
+                  }
+                ]
               }
             ]
           }

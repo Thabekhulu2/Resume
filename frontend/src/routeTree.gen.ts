@@ -15,6 +15,7 @@ import { Route as CandidatesUploadRouteImport } from './routes/candidates/upload
 import { Route as CandidatesIdRouteImport } from './routes/candidates/$id'
 import { Route as EntitiesEntityTypeIndexRouteImport } from './routes/entities/$entityType/index'
 import { Route as EntitiesEntityTypeIdRouteImport } from './routes/entities/$entityType/$id'
+import { Route as CandidatesRangeMinMaxRouteImport } from './routes/candidates/range/$min/$max'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const EntitiesEntityTypeIdRoute = EntitiesEntityTypeIdRouteImport.update({
   path: '/entities/$entityType/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CandidatesRangeMinMaxRoute = CandidatesRangeMinMaxRouteImport.update({
+  id: '/candidates/range/$min/$max',
+  path: '/candidates/range/$min/$max',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/candidates': typeof CandidatesIndexRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof EntitiesEntityTypeIndexRoute
+  '/candidates/range/$min/$max': typeof CandidatesRangeMinMaxRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/candidates': typeof CandidatesIndexRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof EntitiesEntityTypeIndexRoute
+  '/candidates/range/$min/$max': typeof CandidatesRangeMinMaxRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/candidates/': typeof CandidatesIndexRoute
   '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
   '/entities/$entityType/': typeof EntitiesEntityTypeIndexRoute
+  '/candidates/range/$min/$max': typeof CandidatesRangeMinMaxRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/candidates'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
+    | '/candidates/range/$min/$max'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/candidates'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
+    | '/candidates/range/$min/$max'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/candidates/'
     | '/entities/$entityType/$id'
     | '/entities/$entityType/'
+    | '/candidates/range/$min/$max'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   CandidatesIndexRoute: typeof CandidatesIndexRoute
   EntitiesEntityTypeIdRoute: typeof EntitiesEntityTypeIdRoute
   EntitiesEntityTypeIndexRoute: typeof EntitiesEntityTypeIndexRoute
+  CandidatesRangeMinMaxRoute: typeof CandidatesRangeMinMaxRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntitiesEntityTypeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/candidates/range/$min/$max': {
+      id: '/candidates/range/$min/$max'
+      path: '/candidates/range/$min/$max'
+      fullPath: '/candidates/range/$min/$max'
+      preLoaderRoute: typeof CandidatesRangeMinMaxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   CandidatesIndexRoute: CandidatesIndexRoute,
   EntitiesEntityTypeIdRoute: EntitiesEntityTypeIdRoute,
   EntitiesEntityTypeIndexRoute: EntitiesEntityTypeIndexRoute,
+  CandidatesRangeMinMaxRoute: CandidatesRangeMinMaxRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

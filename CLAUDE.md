@@ -19,6 +19,9 @@
 ## Testing Guidelines
 - There is no automated test suite yet; rely on the Supabase CLI for safety checks. Run `supabase db reset --config supabase/config.toml` to verify migrations and seeds apply cleanly.
 - For manual QA, start the stack (`supabase start`), connect via `psql` or Supabase Studio, and spot-check new tables/functions before committing.
+- **Every implementation requires real end-to-end testing before it's considered done**: bring up the actual stack and exercise the real flow (APIs, UI, persisted state) — not just static checks, config validation, or code review.
+- **Every implementation also requires adversarial testing**: deliberately try to break the new behavior — bad inputs, failure-path injection, edge cases (empty input, all-items-failing), race conditions — not just the happy path.
+- State plainly what was e2e-tested and what adversarial cases were tried when reporting an implementation as complete.
 
 ## Logging Guidelines
 - **One-line rule:** All log messages should be formatted as single-line entries rather than spanning multiple lines. This ensures grep efficiency and makes log parsing easier.

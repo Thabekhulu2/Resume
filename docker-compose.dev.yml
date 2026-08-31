@@ -1,4 +1,4 @@
-name: 10x-stack-template
+name: resume-stack
 
 services:
   frontend:

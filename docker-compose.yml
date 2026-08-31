@@ -1,4 +1,4 @@
-name: 10x-stack-template
+name: resume-stack
 
 # The full local Supabase stack (API/Kong, Auth, Storage, Studio, Postgres) is
 # run by the Supabase CLI via `supabase start`, NOT by this compose file --
@@ -11,14 +11,14 @@ name: 10x-stack-template
 services:
   temporal-db:
     image: postgres:15-alpine
-    container_name: temporal-db
+    container_name: resume-temporal-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: temporal
       POSTGRES_PASSWORD: temporal
       POSTGRES_DB: temporal
     ports:
-      - "5433:5432"
+      - "55433:5432"
     volumes:
       - temporal-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -29,7 +29,7 @@ services:
 
   temporal:
     image: temporalio/auto-setup:1.21.3
-    container_name: temporal
+    container_name: resume-temporal
     restart: unless-stopped
     depends_on:
       temporal-db:
@@ -42,7 +42,7 @@ services:
       - POSTGRES_SEEDS=temporal-db
       - TEMPORAL_CLI_ADDRESS=localhost:7233
     ports:
-      - "7234:7233"
+      - "57234:7233"
     healthcheck:
       test: ["CMD", "true"]
       interval: 10s
@@ -51,20 +51,20 @@ services:
 
   temporal-ui:
     image: temporalio/ui:2.21.2
-    container_name: temporal-ui
+    container_name: resume-temporal-ui
     restart: unless-stopped
     depends_on:
       temporal:
         condition: service_started
     environment:
       - TEMPORAL_ADDRESS=temporal:7233
-      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+      - TEMPORAL_CORS_ORIGINS=http://localhost:53900
     ports:
-      - "8080:8080"
+      - "58080:8080"
 
   temporal-worker:
     build: ./temporal
-    container_name: temporal-worker
+    container_name: resume-temporal-worker
     restart: unless-stopped
     depends_on:
       temporal:
@@ -89,12 +89,12 @@ services:
     # it via host.docker.internal -- container-name DNS only works within the
     # same compose network.
     ports:
-      - "8001:8001"
+      - "58001:8001"
 
   frontend:
     build:
       context: ./frontend
-    container_name: frontend
+    container_name: resume-frontend
     depends_on:
       temporal:
         condition: service_started
@@ -103,7 +103,7 @@ services:
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-dev-anon-key}
       - VITE_API_URL=${VITE_API_URL:-http://localhost:55321/functions/v1}
     ports:
-      - "3000:3000"
+      - "53900:3000"
 
 volumes:
   temporal-db-data:

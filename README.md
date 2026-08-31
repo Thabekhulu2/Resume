@@ -16,9 +16,9 @@ Phase 1 scaffolding for the JSON-driven Supabase + Temporal starter.
    (add `USE_DEV=1` for live-reload mounts)  
    This runs `supabase start` (Postgres + API + Auth + Studio, with migrations and seed applied), then brings up Temporal, the worker, and the frontend.
 3) Open services  
-   - Frontend: http://localhost:3000  
-   - Temporal UI: http://localhost:8080  
-   - Temporal gRPC: localhost:7234  
+   - Frontend: http://localhost:53900  
+   - Temporal UI: http://localhost:58080  
+   - Temporal gRPC: localhost:57234  
    - Supabase API: http://localhost:54321  
    - Supabase Studio: http://localhost:54323
 

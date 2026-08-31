@@ -41,15 +41,13 @@ export function Stack({
   children,
 }: StackProps) {
   const isHorizontal = direction === 'horizontal';
-  const gapClass = typeof spacing === 'number' ? `gap-${spacing}` : '';
-  const gapStyle = typeof spacing === 'string' ? { gap: spacing } : undefined;
+  const gapStyle = { gap: typeof spacing === 'number' ? `${spacing * 0.25}rem` : spacing };
 
   return (
     <div
       className={cn(
         'flex',
         isHorizontal ? 'flex-row' : 'flex-col',
-        gapClass,
         alignMap[align],
         justifyMap[justify],
         wrap && 'flex-wrap',

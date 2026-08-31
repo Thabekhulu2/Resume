@@ -23,14 +23,12 @@ export function Grid({
   className,
   children,
 }: GridProps) {
-  const gridCols =
-    typeof columns === 'number' ? `grid-cols-${columns}` : '';
-  const gapClass = typeof gap === 'number' ? `gap-${gap}` : '';
-
   const style: React.CSSProperties = {};
 
   if (typeof columns === 'string') {
     style.gridTemplateColumns = columns;
+  } else {
+    style.gridTemplateColumns = `repeat(${columns}, minmax(0, 1fr))`;
   }
 
   if (typeof rows === 'string') {
@@ -41,6 +39,8 @@ export function Grid({
 
   if (typeof gap === 'string') {
     style.gap = gap;
+  } else {
+    style.gap = `${gap * 0.25}rem`;
   }
 
   if (columnGap !== undefined) {
@@ -52,10 +52,7 @@ export function Grid({
   }
 
   return (
-    <div
-      className={cn('grid', gridCols, gapClass, className)}
-      style={Object.keys(style).length > 0 ? style : undefined}
-    >
+    <div className={cn('grid', className)} style={style}>
       {children}
     </div>
   );

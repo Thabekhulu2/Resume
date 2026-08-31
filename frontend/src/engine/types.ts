@@ -162,8 +162,9 @@ export type ActionDefinition =
   | ForEachAction;
 
 /**
- * Run an action once per item of an array, sequentially. Stops at the first
- * item whose action throws (matching apiCall's onSuccess/onError convention).
+ * Run an action once per item of an array, sequentially. A failing item does
+ * NOT stop the remaining items from running (each item gets its own
+ * try/catch). Use `resultsKey` to inspect which items succeeded/failed.
  */
 export interface ForEachAction {
   action: 'forEach';
@@ -173,10 +174,14 @@ export interface ForEachAction {
   as: string;
   /** Action to run for each item */
   do: ActionDefinition;
-  /** Action to run once, after every item completes without error */
-  onSuccess?: ActionDefinition;
-  /** Action to run once, if any item's action throws (context.event.error holds it); stops iteration */
-  onError?: ActionDefinition;
+  /** Action to run once, after every item has been attempted (regardless of per-item outcome) */
+  onComplete?: ActionDefinition;
+  /**
+   * State key to write per-item results to: an array of
+   * `{ item, success, error? }`, one entry per input item, in order.
+   * Also writes the successful items' `.path` values to `${resultsKey}Paths`.
+   */
+  resultsKey?: string;
 }
 
 /**

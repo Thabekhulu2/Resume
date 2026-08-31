@@ -6,7 +6,9 @@
     "resumeFileName": "",
     "resumeStoragePath": null,
     "resumeFiles": [],
-    "resumeStoragePaths": [],
+    "uploadResults": [],
+    "uploadResultsPaths": [],
+    "triggerResult": null,
     "jdText": "",
     "jobTitle": "",
     "uploading": false,
@@ -34,7 +36,9 @@
               { "action": "setState", "key": "resumeFileName", "value": "" },
               { "action": "setState", "key": "resumeStoragePath", "value": null },
               { "action": "setState", "key": "resumeFiles", "value": [] },
-              { "action": "setState", "key": "resumeStoragePaths", "value": [] }
+              { "action": "setState", "key": "uploadResults", "value": [] },
+              { "action": "setState", "key": "uploadResultsPaths", "value": [] },
+              { "action": "setState", "key": "triggerResult", "value": null }
             ]
           }
         }
@@ -46,6 +50,27 @@
           "variant": "destructive",
           "title": "Something went wrong",
           "description": "{{state.error}}"
+        }
+      },
+      {
+        "type": "Alert",
+        "each": "{{state.uploadResults}}",
+        "as": "uploadResult",
+        "if": "{{!uploadResult.success}}",
+        "props": {
+          "variant": "destructive",
+          "title": "Failed to upload {{uploadResult.item.fileName}}",
+          "description": "{{uploadResult.error}}"
+        }
+      },
+      {
+        "type": "Alert",
+        "each": "{{state.triggerResult.failures}}",
+        "as": "triggerFailure",
+        "props": {
+          "variant": "destructive",
+          "title": "Failed to start scoring for {{triggerFailure.resume_storage_path}}",
+          "description": "{{triggerFailure.error}}"
         }
       },
       {
@@ -123,8 +148,7 @@
                     "action": "sequence",
                     "actions": [
                       { "action": "setState", "key": "error", "value": null },
-                      { "action": "setState", "key": "resumeFiles", "value": "{{event.files}}" },
-                      { "action": "setState", "key": "resumeStoragePaths", "value": "{{event.paths}}" }
+                      { "action": "setState", "key": "resumeFiles", "value": "{{event.files}}" }
                     ]
                   }
                 }
@@ -220,11 +244,15 @@
                 "action": "sequence",
                 "actions": [
                   { "action": "setState", "key": "error", "value": null },
+                  { "action": "setState", "key": "uploadResults", "value": [] },
+                  { "action": "setState", "key": "uploadResultsPaths", "value": [] },
+                  { "action": "setState", "key": "triggerResult", "value": null },
                   { "action": "setState", "key": "submitting", "value": true },
                   {
                     "action": "forEach",
                     "items": "{{state.resumeFiles}}",
                     "as": "resumeFile",
+                    "resultsKey": "uploadResults",
                     "do": {
                       "action": "apiCall",
                       "operation": "upload",
@@ -232,33 +260,39 @@
                       "path": "{{resumeFile.path}}",
                       "data": "{{resumeFile.file}}"
                     },
-                    "onError": {
-                      "action": "sequence",
-                      "actions": [
-                        { "action": "setState", "key": "submitting", "value": false },
-                        { "action": "setState", "key": "error", "value": "Failed to upload one of the resumes. Please try again." }
-                      ]
-                    },
-                    "onSuccess": {
-                      "action": "apiCall",
-                      "operation": "invoke",
-                      "function": "start-scoring-workflow",
-                      "data": {
-                        "resume_storage_paths": "{{state.resumeStoragePaths}}",
-                        "jd_text": "{{state.jdText}}",
-                        "job_title": "{{state.jobTitle}}"
+                    "onComplete": {
+                      "action": "conditional",
+                      "condition": "{{event.successfulPaths.length}}",
+                      "then": {
+                        "action": "apiCall",
+                        "operation": "invoke",
+                        "function": "start-scoring-workflow",
+                        "data": {
+                          "resume_storage_paths": "{{event.successfulPaths}}",
+                          "jd_text": "{{state.jdText}}",
+                          "job_title": "{{state.jobTitle}}"
+                        },
+                        "onSuccess": {
+                          "action": "sequence",
+                          "actions": [
+                            { "action": "setState", "key": "triggerResult", "value": "{{event.data}}" },
+                            {
+                              "action": "conditional",
+                              "condition": "{{event.data.candidates.length}}",
+                              "then": { "action": "navigate", "to": "/candidates" },
+                              "else": { "action": "setState", "key": "submitting", "value": false }
+                            }
+                          ]
+                        },
+                        "onError": {
+                          "action": "sequence",
+                          "actions": [
+                            { "action": "setState", "key": "submitting", "value": false },
+                            { "action": "setState", "key": "error", "value": "Failed to start scoring. Please try again." }
+                          ]
+                        }
                       },
-                      "onSuccess": {
-                        "action": "navigate",
-                        "to": "/candidates"
-                      },
-                      "onError": {
-                        "action": "sequence",
-                        "actions": [
-                          { "action": "setState", "key": "submitting", "value": false },
-                          { "action": "setState", "key": "error", "value": "Failed to start scoring. Please try again." }
-                        ]
-                      }
+                      "else": { "action": "setState", "key": "submitting", "value": false }
                     }
                   }
                 ]

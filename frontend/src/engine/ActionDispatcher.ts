@@ -299,8 +299,7 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
 
   /**
    * Handle forEach action (run an action once per array item, sequentially;
-   * stops and runs onError at the first failing item, matching apiCall's
-   * onSuccess/onError convention)
+   * a failing item does not stop the remaining items from running)
    */
   async function handleForEach(
     action: ForEachAction,
@@ -309,23 +308,38 @@ export function createActionDispatcher(config: ActionDispatcherConfig) {
     const items = resolveValue(action.items, context);
     if (!Array.isArray(items)) return;
 
-    try {
-      for (const item of items) {
+    const results: { item: unknown; success: boolean; error?: string }[] = [];
+    for (const item of items) {
+      try {
         await dispatch(action.do, { ...context, [action.as]: item });
-      }
-    } catch (error) {
-      if (action.onError) {
-        await dispatch(action.onError, {
-          ...context,
-          event: { ...(context.event as object | undefined), error },
+        results.push({ item, success: true });
+      } catch (error) {
+        results.push({
+          item,
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
         });
-        return;
       }
-      throw error;
     }
 
-    if (action.onSuccess) {
-      await dispatch(action.onSuccess, context);
+    const successfulPaths = results
+      .filter((r) => r.success)
+      .map((r) => (r.item as { path?: unknown })?.path);
+
+    if (action.resultsKey) {
+      setState(action.resultsKey, results);
+      setState(`${action.resultsKey}Paths`, successfulPaths);
+    }
+
+    if (action.onComplete) {
+      // Pass results via context.event (not a state re-read) -- a setState
+      // call above is not guaranteed visible to this same dispatch chain's
+      // {{state.x}} reads until the next render (see apiCall's onSuccess/
+      // onError, which pass response data the same way for the same reason).
+      await dispatch(action.onComplete, {
+        ...context,
+        event: { ...(context.event as object | undefined), results, successfulPaths },
+      });
     }
   }
 

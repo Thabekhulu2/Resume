@@ -145,36 +145,57 @@ Deno.serve(async (req: Request) => {
   // Candidate creation + workflow trigger happens once per resume. For a
   // single resume, candidate_entity_id (if given) may be reused; a batch
   // always creates a fresh candidate per resume. Sequential, not parallel,
-  // to keep Storage/Temporal-trigger load predictable and to stop cleanly
-  // (with a clear "which resume failed" error) on the first failure rather
-  // than silently dropping a resume from the batch.
-  const results: { candidate_entity_id: string; workflow_id: string }[] = [];
-  try {
+  // to keep Storage/Temporal-trigger load predictable. The plural (batch)
+  // path does NOT stop at the first failing resume -- each resume gets its
+  // own try/catch so the rest of the batch still gets scored; the singular
+  // (non-batch) path is unchanged and still throws on failure.
+  if (body.resume_storage_paths?.length) {
+    const candidates: { candidate_entity_id: string; workflow_id: string }[] = [];
+    const failures: { resume_storage_path: string; error: string }[] = [];
+
     for (const resumeStoragePath of resumeStoragePaths) {
-      const result = await scoreOneResume(
-        supabase,
-        resumeStoragePath,
-        jobDescriptionEntityId,
-        jdText,
-        resumeStoragePaths.length === 1 ? body.candidate_entity_id : undefined,
-        body.created_by,
-      );
-      results.push(result);
+      try {
+        const result = await scoreOneResume(
+          supabase,
+          resumeStoragePath,
+          jobDescriptionEntityId,
+          jdText,
+          undefined,
+          body.created_by,
+        );
+        candidates.push(result);
+      } catch (error) {
+        failures.push({
+          resume_storage_path: resumeStoragePath,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
+
+    return jsonResponse({
+      job_description_entity_id: jobDescriptionEntityId,
+      candidates,
+      failures,
+    });
+  }
+
+  let result: { candidate_entity_id: string; workflow_id: string };
+  try {
+    result = await scoreOneResume(
+      supabase,
+      resumeStoragePaths[0],
+      jobDescriptionEntityId,
+      jdText,
+      body.candidate_entity_id,
+      body.created_by,
+    );
   } catch (error) {
     return jsonResponse({ error: error instanceof Error ? error.message : String(error) }, 500);
   }
 
-  if (body.resume_storage_paths?.length) {
-    return jsonResponse({
-      job_description_entity_id: jobDescriptionEntityId,
-      candidates: results,
-    });
-  }
-
   return jsonResponse({
-    candidate_entity_id: results[0].candidate_entity_id,
+    candidate_entity_id: result.candidate_entity_id,
     job_description_entity_id: jobDescriptionEntityId,
-    workflow_id: results[0].workflow_id,
+    workflow_id: result.workflow_id,
   });
 });

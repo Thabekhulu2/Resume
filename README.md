@@ -13,7 +13,7 @@ Phase 1 scaffolding for the JSON-driven Supabase + Temporal starter.
    `cp .env.example .env`
 2) Start everything  
    `make up`  
-   (add `USE_DEV=1` for live-reload mounts)  
+   (live-reload mounts for frontend/worker are on by default; pass `USE_DEV=0 make up` for a frozen built-image run instead)  
    This runs `supabase start` (Postgres + API + Auth + Studio, with migrations and seed applied), then brings up Temporal, the worker, and the frontend.
 3) Open services  
    - Frontend: http://localhost:53900  

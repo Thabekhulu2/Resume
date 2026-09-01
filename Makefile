@@ -2,7 +2,7 @@ export DOCKER_BUILDKIT=0
 
 COMPOSE_BASE=docker-compose.yml
 COMPOSE_DEV=docker-compose.dev.yml
-USE_DEV?=0
+USE_DEV?=1
 
 ifeq ($(USE_DEV),1)
 COMPOSE_FILES=$(COMPOSE_BASE) $(COMPOSE_DEV)
@@ -16,7 +16,9 @@ COMPOSE_CMD=docker compose $(foreach file,$(COMPOSE_FILES),-f $(file))
 
 # `up` starts the full local Supabase stack (Postgres + API/Kong + Auth +
 # Storage + Studio) via the Supabase CLI, applying migrations and seed, THEN
-# brings up Temporal + worker + frontend via docker compose.
+# brings up Temporal + worker + frontend via docker compose. Live-reload
+# (docker-compose.dev.yml) is on by default; pass USE_DEV=0 for a frozen
+# built-image run instead.
 up:
 	supabase start
 	@eval "$$(./scripts/supabase-env.sh)"; $(COMPOSE_CMD) up -d

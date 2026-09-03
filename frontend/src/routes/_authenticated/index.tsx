@@ -7,7 +7,7 @@ import { UIEngine } from '@/engine';
 import dashboardPage from '@/pages/dashboard.json';
 import type { PageDefinition } from '@/engine/types';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_authenticated/')({
   component: DashboardPage,
 });
 

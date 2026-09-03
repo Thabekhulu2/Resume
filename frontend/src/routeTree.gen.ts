@@ -9,81 +9,123 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as CandidatesIndexRouteImport } from './routes/candidates/index'
-import { Route as CandidatesUploadRouteImport } from './routes/candidates/upload'
-import { Route as CandidatesIdRouteImport } from './routes/candidates/$id'
-import { Route as EntitiesEntityTypeIndexRouteImport } from './routes/entities/$entityType/index'
-import { Route as EntitiesEntityTypeIdRouteImport } from './routes/entities/$entityType/$id'
-import { Route as CandidatesRangeMinMaxRouteImport } from './routes/candidates/range/$min/$max'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as CandidateSignupRouteImport } from './routes/candidate/signup'
+import { Route as CandidateLoginRouteImport } from './routes/candidate/login'
+import { Route as AuthenticatedCandidatesIndexRouteImport } from './routes/_authenticated/candidates/index'
+import { Route as AuthenticatedCandidatesUploadRouteImport } from './routes/_authenticated/candidates/upload'
+import { Route as AuthenticatedCandidatesIdRouteImport } from './routes/_authenticated/candidates/$id'
+import { Route as AuthenticatedEntitiesEntityTypeIndexRouteImport } from './routes/_authenticated/entities/$entityType/index'
+import { Route as AuthenticatedEntitiesEntityTypeIdRouteImport } from './routes/_authenticated/entities/$entityType/$id'
+import { Route as AuthenticatedCandidatesRangeMinMaxRouteImport } from './routes/_authenticated/candidates/range/$min/$max'
 
-const IndexRoute = IndexRouteImport.update({
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const CandidateSignupRoute = CandidateSignupRouteImport.update({
+  id: '/candidate/signup',
+  path: '/candidate/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CandidatesIndexRoute = CandidatesIndexRouteImport.update({
-  id: '/candidates/',
-  path: '/candidates/',
+const CandidateLoginRoute = CandidateLoginRouteImport.update({
+  id: '/candidate/login',
+  path: '/candidate/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CandidatesUploadRoute = CandidatesUploadRouteImport.update({
-  id: '/candidates/upload',
-  path: '/candidates/upload',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CandidatesIdRoute = CandidatesIdRouteImport.update({
-  id: '/candidates/$id',
-  path: '/candidates/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EntitiesEntityTypeIndexRoute = EntitiesEntityTypeIndexRouteImport.update({
-  id: '/entities/$entityType/',
-  path: '/entities/$entityType/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EntitiesEntityTypeIdRoute = EntitiesEntityTypeIdRouteImport.update({
-  id: '/entities/$entityType/$id',
-  path: '/entities/$entityType/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CandidatesRangeMinMaxRoute = CandidatesRangeMinMaxRouteImport.update({
-  id: '/candidates/range/$min/$max',
-  path: '/candidates/range/$min/$max',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthenticatedCandidatesIndexRoute =
+  AuthenticatedCandidatesIndexRouteImport.update({
+    id: '/candidates/',
+    path: '/candidates/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCandidatesUploadRoute =
+  AuthenticatedCandidatesUploadRouteImport.update({
+    id: '/candidates/upload',
+    path: '/candidates/upload',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCandidatesIdRoute =
+  AuthenticatedCandidatesIdRouteImport.update({
+    id: '/candidates/$id',
+    path: '/candidates/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedEntitiesEntityTypeIndexRoute =
+  AuthenticatedEntitiesEntityTypeIndexRouteImport.update({
+    id: '/entities/$entityType/',
+    path: '/entities/$entityType/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedEntitiesEntityTypeIdRoute =
+  AuthenticatedEntitiesEntityTypeIdRouteImport.update({
+    id: '/entities/$entityType/$id',
+    path: '/entities/$entityType/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCandidatesRangeMinMaxRoute =
+  AuthenticatedCandidatesRangeMinMaxRouteImport.update({
+    id: '/candidates/range/$min/$max',
+    path: '/candidates/range/$min/$max',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/candidates/$id': typeof CandidatesIdRoute
-  '/candidates/upload': typeof CandidatesUploadRoute
-  '/candidates': typeof CandidatesIndexRoute
-  '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
-  '/entities/$entityType': typeof EntitiesEntityTypeIndexRoute
-  '/candidates/range/$min/$max': typeof CandidatesRangeMinMaxRoute
+  '/login': typeof LoginRoute
+  '/candidate/login': typeof CandidateLoginRoute
+  '/candidate/signup': typeof CandidateSignupRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/candidates/$id': typeof AuthenticatedCandidatesIdRoute
+  '/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
+  '/candidates': typeof AuthenticatedCandidatesIndexRoute
+  '/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
+  '/entities/$entityType': typeof AuthenticatedEntitiesEntityTypeIndexRoute
+  '/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/candidates/$id': typeof CandidatesIdRoute
-  '/candidates/upload': typeof CandidatesUploadRoute
-  '/candidates': typeof CandidatesIndexRoute
-  '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
-  '/entities/$entityType': typeof EntitiesEntityTypeIndexRoute
-  '/candidates/range/$min/$max': typeof CandidatesRangeMinMaxRoute
+  '/login': typeof LoginRoute
+  '/candidate/login': typeof CandidateLoginRoute
+  '/candidate/signup': typeof CandidateSignupRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/candidates/$id': typeof AuthenticatedCandidatesIdRoute
+  '/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
+  '/candidates': typeof AuthenticatedCandidatesIndexRoute
+  '/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
+  '/entities/$entityType': typeof AuthenticatedEntitiesEntityTypeIndexRoute
+  '/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/candidates/$id': typeof CandidatesIdRoute
-  '/candidates/upload': typeof CandidatesUploadRoute
-  '/candidates/': typeof CandidatesIndexRoute
-  '/entities/$entityType/$id': typeof EntitiesEntityTypeIdRoute
-  '/entities/$entityType/': typeof EntitiesEntityTypeIndexRoute
-  '/candidates/range/$min/$max': typeof CandidatesRangeMinMaxRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/candidate/login': typeof CandidateLoginRoute
+  '/candidate/signup': typeof CandidateSignupRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/candidates/$id': typeof AuthenticatedCandidatesIdRoute
+  '/_authenticated/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
+  '/_authenticated/candidates/': typeof AuthenticatedCandidatesIndexRoute
+  '/_authenticated/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
+  '/_authenticated/entities/$entityType/': typeof AuthenticatedEntitiesEntityTypeIndexRoute
+  '/_authenticated/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/login'
+    | '/candidate/login'
+    | '/candidate/signup'
     | '/'
     | '/candidates/$id'
     | '/candidates/upload'
@@ -93,6 +135,9 @@ export interface FileRouteTypes {
     | '/candidates/range/$min/$max'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/login'
+    | '/candidate/login'
+    | '/candidate/signup'
     | '/'
     | '/candidates/$id'
     | '/candidates/upload'
@@ -102,87 +147,140 @@ export interface FileRouteTypes {
     | '/candidates/range/$min/$max'
   id:
     | '__root__'
-    | '/'
-    | '/candidates/$id'
-    | '/candidates/upload'
-    | '/candidates/'
-    | '/entities/$entityType/$id'
-    | '/entities/$entityType/'
-    | '/candidates/range/$min/$max'
+    | '/_authenticated'
+    | '/login'
+    | '/candidate/login'
+    | '/candidate/signup'
+    | '/_authenticated/'
+    | '/_authenticated/candidates/$id'
+    | '/_authenticated/candidates/upload'
+    | '/_authenticated/candidates/'
+    | '/_authenticated/entities/$entityType/$id'
+    | '/_authenticated/entities/$entityType/'
+    | '/_authenticated/candidates/range/$min/$max'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CandidatesIdRoute: typeof CandidatesIdRoute
-  CandidatesUploadRoute: typeof CandidatesUploadRoute
-  CandidatesIndexRoute: typeof CandidatesIndexRoute
-  EntitiesEntityTypeIdRoute: typeof EntitiesEntityTypeIdRoute
-  EntitiesEntityTypeIndexRoute: typeof EntitiesEntityTypeIndexRoute
-  CandidatesRangeMinMaxRoute: typeof CandidatesRangeMinMaxRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  CandidateLoginRoute: typeof CandidateLoginRoute
+  CandidateSignupRoute: typeof CandidateSignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/candidate/signup': {
+      id: '/candidate/signup'
+      path: '/candidate/signup'
+      fullPath: '/candidate/signup'
+      preLoaderRoute: typeof CandidateSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/candidates/': {
-      id: '/candidates/'
+    '/candidate/login': {
+      id: '/candidate/login'
+      path: '/candidate/login'
+      fullPath: '/candidate/login'
+      preLoaderRoute: typeof CandidateLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/candidates/': {
+      id: '/_authenticated/candidates/'
       path: '/candidates'
       fullPath: '/candidates'
-      preLoaderRoute: typeof CandidatesIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCandidatesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/candidates/upload': {
-      id: '/candidates/upload'
+    '/_authenticated/candidates/upload': {
+      id: '/_authenticated/candidates/upload'
       path: '/candidates/upload'
       fullPath: '/candidates/upload'
-      preLoaderRoute: typeof CandidatesUploadRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCandidatesUploadRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/candidates/$id': {
-      id: '/candidates/$id'
+    '/_authenticated/candidates/$id': {
+      id: '/_authenticated/candidates/$id'
       path: '/candidates/$id'
       fullPath: '/candidates/$id'
-      preLoaderRoute: typeof CandidatesIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCandidatesIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/entities/$entityType/': {
-      id: '/entities/$entityType/'
+    '/_authenticated/entities/$entityType/': {
+      id: '/_authenticated/entities/$entityType/'
       path: '/entities/$entityType'
       fullPath: '/entities/$entityType'
-      preLoaderRoute: typeof EntitiesEntityTypeIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedEntitiesEntityTypeIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/entities/$entityType/$id': {
-      id: '/entities/$entityType/$id'
+    '/_authenticated/entities/$entityType/$id': {
+      id: '/_authenticated/entities/$entityType/$id'
       path: '/entities/$entityType/$id'
       fullPath: '/entities/$entityType/$id'
-      preLoaderRoute: typeof EntitiesEntityTypeIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedEntitiesEntityTypeIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/candidates/range/$min/$max': {
-      id: '/candidates/range/$min/$max'
+    '/_authenticated/candidates/range/$min/$max': {
+      id: '/_authenticated/candidates/range/$min/$max'
       path: '/candidates/range/$min/$max'
       fullPath: '/candidates/range/$min/$max'
-      preLoaderRoute: typeof CandidatesRangeMinMaxRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCandidatesRangeMinMaxRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCandidatesIdRoute: typeof AuthenticatedCandidatesIdRoute
+  AuthenticatedCandidatesUploadRoute: typeof AuthenticatedCandidatesUploadRoute
+  AuthenticatedCandidatesIndexRoute: typeof AuthenticatedCandidatesIndexRoute
+  AuthenticatedEntitiesEntityTypeIdRoute: typeof AuthenticatedEntitiesEntityTypeIdRoute
+  AuthenticatedEntitiesEntityTypeIndexRoute: typeof AuthenticatedEntitiesEntityTypeIndexRoute
+  AuthenticatedCandidatesRangeMinMaxRoute: typeof AuthenticatedCandidatesRangeMinMaxRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedCandidatesIdRoute: AuthenticatedCandidatesIdRoute,
+  AuthenticatedCandidatesUploadRoute: AuthenticatedCandidatesUploadRoute,
+  AuthenticatedCandidatesIndexRoute: AuthenticatedCandidatesIndexRoute,
+  AuthenticatedEntitiesEntityTypeIdRoute:
+    AuthenticatedEntitiesEntityTypeIdRoute,
+  AuthenticatedEntitiesEntityTypeIndexRoute:
+    AuthenticatedEntitiesEntityTypeIndexRoute,
+  AuthenticatedCandidatesRangeMinMaxRoute:
+    AuthenticatedCandidatesRangeMinMaxRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  CandidatesIdRoute: CandidatesIdRoute,
-  CandidatesUploadRoute: CandidatesUploadRoute,
-  CandidatesIndexRoute: CandidatesIndexRoute,
-  EntitiesEntityTypeIdRoute: EntitiesEntityTypeIdRoute,
-  EntitiesEntityTypeIndexRoute: EntitiesEntityTypeIndexRoute,
-  CandidatesRangeMinMaxRoute: CandidatesRangeMinMaxRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
+  CandidateLoginRoute: CandidateLoginRoute,
+  CandidateSignupRoute: CandidateSignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

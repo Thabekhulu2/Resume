@@ -7,7 +7,7 @@ import { UIEngine } from '@/engine';
 import entityDetailPage from '@/pages/entity-detail.json';
 import type { PageDefinition } from '@/engine/types';
 
-export const Route = createFileRoute('/entities/$entityType/$id')({
+export const Route = createFileRoute('/_authenticated/entities/$entityType/$id')({
   component: EntityDetailPage,
 });
 

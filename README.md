@@ -36,6 +36,12 @@ Common commands:
 - Makefile wrappers for the usual lifecycle commands
 - `.env.example` capturing required variables for frontend, Temporal, and Supabase
 
+## Auth
+Login is required (see `docs/specs/0008-auth-recruiter-candidate-login.md`). Candidates self-register at `/candidate/signup`. Recruitment Team accounts are not self-service — provision one locally with:
+```
+./scripts/create-recruiter.sh you@example.com yourpassword "Your Name"
+```
+
 ## Notes
 - Supabase runs via the CLI (`supabase start`), not docker compose. The worker reaches it at `host.docker.internal:54321`; the browser/frontend at `localhost:54321`.
 - The Temporal worker activities are still stubs (they return mock data); replace with real implementations as you build out features.

@@ -7,7 +7,7 @@ import { UIEngine } from '@/engine';
 import candidateUploadPage from '@/pages/candidate-upload.json';
 import type { PageDefinition } from '@/engine/types';
 
-export const Route = createFileRoute('/candidates/upload')({
+export const Route = createFileRoute('/_authenticated/candidates/upload')({
   component: CandidateUploadPage,
 });
 

@@ -4,6 +4,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { initializeRegistry } from '@/registry';
+import { AuthProvider } from '@/lib/auth';
 import { routeTree } from './routeTree.gen';
 import '@/styles/globals.css';
 
@@ -49,7 +50,9 @@ if (root) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
         <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
       </QueryClientProvider>
     </React.StrictMode>

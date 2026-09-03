@@ -7,7 +7,7 @@ import { UIEngine } from '@/engine';
 import entityListPage from '@/pages/entity-list.json';
 import type { PageDefinition } from '@/engine/types';
 
-export const Route = createFileRoute('/entities/$entityType/')({
+export const Route = createFileRoute('/_authenticated/entities/$entityType/')({
   component: EntityListPage,
 });
 

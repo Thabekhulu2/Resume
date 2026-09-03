@@ -7,7 +7,7 @@ import { UIEngine } from '@/engine';
 import candidateHistoryPage from '@/pages/candidate-history.json';
 import type { PageDefinition } from '@/engine/types';
 
-export const Route = createFileRoute('/candidates/')({
+export const Route = createFileRoute('/_authenticated/candidates/')({
   component: CandidateHistoryPage,
 });
 

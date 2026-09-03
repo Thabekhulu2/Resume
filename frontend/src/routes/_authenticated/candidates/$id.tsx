@@ -7,7 +7,7 @@ import { UIEngine } from '@/engine';
 import candidateScorecardPage from '@/pages/candidate-scorecard.json';
 import type { PageDefinition } from '@/engine/types';
 
-export const Route = createFileRoute('/candidates/$id')({
+export const Route = createFileRoute('/_authenticated/candidates/$id')({
   component: CandidateScorecardPage,
 });
 

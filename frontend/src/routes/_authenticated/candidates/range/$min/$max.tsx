@@ -7,7 +7,7 @@ import { UIEngine } from '@/engine';
 import candidateRangePage from '@/pages/candidate-range.json';
 import type { PageDefinition } from '@/engine/types';
 
-export const Route = createFileRoute('/candidates/range/$min/$max')({
+export const Route = createFileRoute('/_authenticated/candidates/range/$min/$max')({
   component: CandidateRangePage,
 });
 

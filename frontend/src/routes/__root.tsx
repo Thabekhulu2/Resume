@@ -2,16 +2,31 @@
  * Root Route - App Shell
  */
 
-import { createRootRoute, Outlet, Link, useLocation } from '@tanstack/react-router';
+import { createRootRoute, Outlet, Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { cn } from '@/lib/utils';
-import { Home, UserPlus, History } from 'lucide-react';
+import { Home, UserPlus, History, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/lib/auth';
 
 export const Route = createRootRoute({
   component: RootComponent,
 });
 
+const PUBLIC_PATHS = ['/login', '/candidate/login', '/candidate/signup'];
+
 function RootComponent() {
+  const location = useLocation();
+  const isPublicPage = PUBLIC_PATHS.includes(location.pathname);
+
+  if (isPublicPage) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Outlet />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -29,10 +44,27 @@ function RootComponent() {
 }
 
 function Header() {
+  const { user, role, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await signOut();
+    navigate({ to: role === 'candidate' ? '/candidate/login' : '/login' });
+  }
+
   return (
     <header className="h-16 border-b bg-card flex items-center gap-3 px-6">
       <img src="/brand/adapt-it-icon.png" alt="Adapt IT" className="h-8 w-8" />
       <h1 className="text-xl font-bold">Candidate Scoring</h1>
+      {user && (
+        <div className="ml-auto flex items-center gap-3 text-sm">
+          <span className="text-muted-foreground">{user.email}</span>
+          <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-1" />
+            Logout
+          </Button>
+        </div>
+      )}
     </header>
   );
 }

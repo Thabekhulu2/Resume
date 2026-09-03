@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as CandidateSignupRouteImport } from './routes/candidate/signup'
 import { Route as CandidateLoginRouteImport } from './routes/candidate/login'
+import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedCandidatesIndexRouteImport } from './routes/_authenticated/candidates/index'
 import { Route as AuthenticatedCandidatesUploadRouteImport } from './routes/_authenticated/candidates/upload'
 import { Route as AuthenticatedCandidatesIdRouteImport } from './routes/_authenticated/candidates/$id'
@@ -44,6 +45,11 @@ const CandidateLoginRoute = CandidateLoginRouteImport.update({
   id: '/candidate/login',
   path: '/candidate/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedJobsIndexRoute = AuthenticatedJobsIndexRouteImport.update({
+  id: '/jobs/',
+  path: '/jobs/',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedCandidatesIndexRoute =
   AuthenticatedCandidatesIndexRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/candidates/$id': typeof AuthenticatedCandidatesIdRoute
   '/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
   '/candidates': typeof AuthenticatedCandidatesIndexRoute
+  '/jobs': typeof AuthenticatedJobsIndexRoute
   '/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof AuthenticatedEntitiesEntityTypeIndexRoute
   '/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/candidates/$id': typeof AuthenticatedCandidatesIdRoute
   '/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
   '/candidates': typeof AuthenticatedCandidatesIndexRoute
+  '/jobs': typeof AuthenticatedJobsIndexRoute
   '/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof AuthenticatedEntitiesEntityTypeIndexRoute
   '/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/_authenticated/candidates/$id': typeof AuthenticatedCandidatesIdRoute
   '/_authenticated/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
   '/_authenticated/candidates/': typeof AuthenticatedCandidatesIndexRoute
+  '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_authenticated/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/_authenticated/entities/$entityType/': typeof AuthenticatedEntitiesEntityTypeIndexRoute
   '/_authenticated/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/candidates/$id'
     | '/candidates/upload'
     | '/candidates'
+    | '/jobs'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
     | '/candidates/range/$min/$max'
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/candidates/$id'
     | '/candidates/upload'
     | '/candidates'
+    | '/jobs'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
     | '/candidates/range/$min/$max'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/_authenticated/candidates/$id'
     | '/_authenticated/candidates/upload'
     | '/_authenticated/candidates/'
+    | '/_authenticated/jobs/'
     | '/_authenticated/entities/$entityType/$id'
     | '/_authenticated/entities/$entityType/'
     | '/_authenticated/candidates/range/$min/$max'
@@ -203,6 +215,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/candidate/login'
       preLoaderRoute: typeof CandidateLoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/jobs/': {
+      id: '/_authenticated/jobs/'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof AuthenticatedJobsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/candidates/': {
       id: '/_authenticated/candidates/'
@@ -254,6 +273,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCandidatesIdRoute: typeof AuthenticatedCandidatesIdRoute
   AuthenticatedCandidatesUploadRoute: typeof AuthenticatedCandidatesUploadRoute
   AuthenticatedCandidatesIndexRoute: typeof AuthenticatedCandidatesIndexRoute
+  AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedEntitiesEntityTypeIdRoute: typeof AuthenticatedEntitiesEntityTypeIdRoute
   AuthenticatedEntitiesEntityTypeIndexRoute: typeof AuthenticatedEntitiesEntityTypeIndexRoute
   AuthenticatedCandidatesRangeMinMaxRoute: typeof AuthenticatedCandidatesRangeMinMaxRoute
@@ -264,6 +284,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCandidatesIdRoute: AuthenticatedCandidatesIdRoute,
   AuthenticatedCandidatesUploadRoute: AuthenticatedCandidatesUploadRoute,
   AuthenticatedCandidatesIndexRoute: AuthenticatedCandidatesIndexRoute,
+  AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedEntitiesEntityTypeIdRoute:
     AuthenticatedEntitiesEntityTypeIdRoute,
   AuthenticatedEntitiesEntityTypeIndexRoute:

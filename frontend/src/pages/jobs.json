@@ -1,0 +1,286 @@
+{
+  "id": "jobs",
+  "title": "Jobs",
+  "state": {
+    "statusFilter": "open",
+    "newJobTitle": "",
+    "newJobLocation": "",
+    "newJobDescription": "",
+    "createError": null
+  },
+  "dataSources": {
+    "jobs": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "id, created_at, entity_versions!inner(id, data, is_current)",
+      "filters": [
+        { "field": "entity_type", "op": "eq", "value": "job_description" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true },
+        { "field": "entity_versions.data->>status", "op": "eq", "value": "{{state.statusFilter}}" }
+      ],
+      "order": [{ "column": "created_at", "ascending": false }]
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "direction": "horizontal", "justify": "between", "align": "center" },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 1 },
+            "children": [
+              { "type": "Heading", "props": { "level": 1, "children": "Jobs" } },
+              { "type": "Text", "props": { "variant": "muted", "children": "Open roles and job postings" } }
+            ]
+          },
+          {
+            "type": "Button",
+            "props": {
+              "children": "New Job",
+              "onClick": { "action": "openModal", "modalId": "createJob" }
+            }
+          }
+        ]
+      },
+      {
+        "type": "Stack",
+        "props": { "direction": "horizontal", "spacing": 2 },
+        "children": [
+          {
+            "type": "Button",
+            "props": {
+              "children": "Open",
+              "variant": "{{state.statusFilter === 'open' ? 'default' : 'outline'}}",
+              "onClick": { "action": "setState", "key": "statusFilter", "value": "open" }
+            }
+          },
+          {
+            "type": "Button",
+            "props": {
+              "children": "Closed",
+              "variant": "{{state.statusFilter === 'closed' ? 'default' : 'outline'}}",
+              "onClick": { "action": "setState", "key": "statusFilter", "value": "closed" }
+            }
+          }
+        ]
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 2 },
+            "children": [
+              {
+                "type": "Stack",
+                "each": "{{data.jobs}}",
+                "as": "job",
+                "key": "{{job.id}}",
+                "props": {
+                  "direction": "horizontal",
+                  "justify": "between",
+                  "align": "center",
+                  "className": "p-4 border rounded-lg"
+                },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "spacing": 1 },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "props": { "weight": "medium", "children": "{{job.entity_versions[0].data.title}}" }
+                      },
+                      {
+                        "type": "Text",
+                        "if": "{{job.entity_versions[0].data.location}}",
+                        "props": {
+                          "variant": "muted",
+                          "size": "sm",
+                          "children": "{{job.entity_versions[0].data.location}}"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 2, "align": "center" },
+                    "children": [
+                      {
+                        "type": "Badge",
+                        "props": {
+                          "variant": "{{job.entity_versions[0].data.status === 'open' ? 'default' : 'secondary'}}",
+                          "children": "{{job.entity_versions[0].data.status}}"
+                        }
+                      },
+                      {
+                        "type": "Button",
+                        "if": "{{job.entity_versions[0].data.status !== 'closed'}}",
+                        "props": {
+                          "variant": "outline",
+                          "size": "sm",
+                          "children": "Close",
+                          "onClick": {
+                            "action": "apiCall",
+                            "operation": "update",
+                            "table": "entity_versions",
+                            "match": { "entity_id": "{{job.id}}", "is_current": true },
+                            "data": {
+                              "data": {
+                                "title": "{{job.entity_versions[0].data.title}}",
+                                "jd_text": "{{job.entity_versions[0].data.jd_text}}",
+                                "location": "{{job.entity_versions[0].data.location}}",
+                                "status": "closed"
+                              }
+                            },
+                            "onSuccess": { "action": "refetch", "source": "jobs" }
+                          }
+                        }
+                      },
+                      {
+                        "type": "Button",
+                        "if": "{{job.entity_versions[0].data.status === 'closed'}}",
+                        "props": {
+                          "variant": "outline",
+                          "size": "sm",
+                          "children": "Reopen",
+                          "onClick": {
+                            "action": "apiCall",
+                            "operation": "update",
+                            "table": "entity_versions",
+                            "match": { "entity_id": "{{job.id}}", "is_current": true },
+                            "data": {
+                              "data": {
+                                "title": "{{job.entity_versions[0].data.title}}",
+                                "jd_text": "{{job.entity_versions[0].data.jd_text}}",
+                                "location": "{{job.entity_versions[0].data.location}}",
+                                "status": "open"
+                              }
+                            },
+                            "onSuccess": { "action": "refetch", "source": "jobs" }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Text",
+                "if": "{{!data.jobs || data.jobs.length === 0}}",
+                "props": {
+                  "variant": "muted",
+                  "className": "text-center py-8",
+                  "children": "No {{state.statusFilter}} jobs."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "modals": {
+    "createJob": {
+      "title": "New Job",
+      "size": "md",
+      "content": {
+        "type": "Stack",
+        "props": { "spacing": 4 },
+        "children": [
+          {
+            "type": "Alert",
+            "if": "{{state.createError}}",
+            "props": { "variant": "destructive", "title": "{{state.createError}}" }
+          },
+          {
+            "type": "Input",
+            "props": {
+              "label": "Title",
+              "name": "title",
+              "required": true,
+              "value": "{{state.newJobTitle}}",
+              "onChange": { "action": "setState", "key": "newJobTitle", "value": "{{event.target.value}}" }
+            }
+          },
+          {
+            "type": "Input",
+            "props": {
+              "label": "Location",
+              "name": "location",
+              "value": "{{state.newJobLocation}}",
+              "onChange": { "action": "setState", "key": "newJobLocation", "value": "{{event.target.value}}" }
+            }
+          },
+          {
+            "type": "Textarea",
+            "props": {
+              "label": "Description",
+              "name": "description",
+              "required": true,
+              "rows": 8,
+              "value": "{{state.newJobDescription}}",
+              "onChange": { "action": "setState", "key": "newJobDescription", "value": "{{event.target.value}}" }
+            }
+          },
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "justify": "end", "spacing": 2 },
+            "children": [
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "outline",
+                  "children": "Cancel",
+                  "onClick": { "action": "closeModal", "modalId": "createJob" }
+                }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "children": "Create",
+                  "disabled": "{{!state.newJobTitle || !state.newJobDescription}}",
+                  "onClick": {
+                    "action": "apiCall",
+                    "operation": "rpc",
+                    "function": "create_entity_with_version",
+                    "data": {
+                      "p_entity_type": "job_description",
+                      "p_data": {
+                        "title": "{{state.newJobTitle}}",
+                        "jd_text": "{{state.newJobDescription}}",
+                        "location": "{{state.newJobLocation}}",
+                        "status": "open"
+                      }
+                    },
+                    "onSuccess": {
+                      "action": "sequence",
+                      "actions": [
+                        { "action": "closeModal", "modalId": "createJob" },
+                        { "action": "setState", "key": "newJobTitle", "value": "" },
+                        { "action": "setState", "key": "newJobLocation", "value": "" },
+                        { "action": "setState", "key": "newJobDescription", "value": "" },
+                        { "action": "setState", "key": "createError", "value": null },
+                        { "action": "setState", "key": "statusFilter", "value": "open" },
+                        { "action": "refetch", "source": "jobs" }
+                      ]
+                    },
+                    "onError": {
+                      "action": "setState",
+                      "key": "createError",
+                      "value": "Failed to create job. Please try again."
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@
 import { createRootRoute, Outlet, Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { cn } from '@/lib/utils';
-import { Home, UserPlus, History, LogOut } from 'lucide-react';
+import { Home, UserPlus, History, LogOut, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
 
@@ -86,6 +86,19 @@ function Sidebar() {
         >
           <Home className="h-4 w-4" />
           Dashboard
+        </Link>
+
+        <Link
+          to="/jobs"
+          className={cn(
+            'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors',
+            location.pathname === '/jobs'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-muted'
+          )}
+        >
+          <Briefcase className="h-4 w-4" />
+          Jobs
         </Link>
 
         <Link

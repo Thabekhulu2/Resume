@@ -1,5 +1,6 @@
 /**
- * Recruitment Team Login
+ * Unified Login — shared by Recruitment Team and Candidates; role is
+ * resolved after sign-in to decide where to land. See docs/specs/0011.
  */
 
 import { useState, type FormEvent } from 'react';
@@ -31,21 +32,21 @@ function LoginPage() {
     }
     setSubmitting(true);
     setError(null);
-    const { error: signInError } = await signIn(email.trim(), password);
+    const { error: signInError, role } = await signIn(email.trim(), password);
     setSubmitting(false);
     if (signInError) {
       setError(signInError);
       return;
     }
-    navigate({ to: '/' });
+    navigate({ to: role === 'candidate' ? '/apply' : '/' });
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Recruitment Team Login</CardTitle>
-          <CardDescription>Sign in to access candidate scoring.</CardDescription>
+          <CardTitle>Log In</CardTitle>
+          <CardDescription>Sign in to continue.</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>

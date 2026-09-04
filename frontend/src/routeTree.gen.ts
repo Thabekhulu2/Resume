@@ -14,7 +14,6 @@ import { Route as CandidateAuthRouteImport } from './routes/_candidateAuth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as CandidateSignupRouteImport } from './routes/candidate/signup'
-import { Route as CandidateLoginRouteImport } from './routes/candidate/login'
 import { Route as CandidateAuthApplyIndexRouteImport } from './routes/_candidateAuth/apply/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedCandidatesIndexRouteImport } from './routes/_authenticated/candidates/index'
@@ -45,11 +44,6 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
 const CandidateSignupRoute = CandidateSignupRouteImport.update({
   id: '/candidate/signup',
   path: '/candidate/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CandidateLoginRoute = CandidateLoginRouteImport.update({
-  id: '/candidate/login',
-  path: '/candidate/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CandidateAuthApplyIndexRoute = CandidateAuthApplyIndexRouteImport.update({
@@ -101,7 +95,6 @@ const AuthenticatedCandidatesRangeMinMaxRoute =
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
-  '/candidate/login': typeof CandidateLoginRoute
   '/candidate/signup': typeof CandidateSignupRoute
   '/': typeof AuthenticatedIndexRoute
   '/candidates/$id': typeof AuthenticatedCandidatesIdRoute
@@ -115,7 +108,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/candidate/login': typeof CandidateLoginRoute
   '/candidate/signup': typeof CandidateSignupRoute
   '/': typeof AuthenticatedIndexRoute
   '/candidates/$id': typeof AuthenticatedCandidatesIdRoute
@@ -132,7 +124,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_candidateAuth': typeof CandidateAuthRouteWithChildren
   '/login': typeof LoginRoute
-  '/candidate/login': typeof CandidateLoginRoute
   '/candidate/signup': typeof CandidateSignupRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/candidates/$id': typeof AuthenticatedCandidatesIdRoute
@@ -148,7 +139,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
-    | '/candidate/login'
     | '/candidate/signup'
     | '/'
     | '/candidates/$id'
@@ -162,7 +152,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
-    | '/candidate/login'
     | '/candidate/signup'
     | '/'
     | '/candidates/$id'
@@ -178,7 +167,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/_candidateAuth'
     | '/login'
-    | '/candidate/login'
     | '/candidate/signup'
     | '/_authenticated/'
     | '/_authenticated/candidates/$id'
@@ -195,7 +183,6 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   CandidateAuthRoute: typeof CandidateAuthRouteWithChildren
   LoginRoute: typeof LoginRoute
-  CandidateLoginRoute: typeof CandidateLoginRoute
   CandidateSignupRoute: typeof CandidateSignupRoute
 }
 
@@ -234,13 +221,6 @@ declare module '@tanstack/react-router' {
       path: '/candidate/signup'
       fullPath: '/candidate/signup'
       preLoaderRoute: typeof CandidateSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/candidate/login': {
-      id: '/candidate/login'
-      path: '/candidate/login'
-      fullPath: '/candidate/login'
-      preLoaderRoute: typeof CandidateLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_candidateAuth/apply/': {
@@ -347,7 +327,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   CandidateAuthRoute: CandidateAuthRouteWithChildren,
   LoginRoute: LoginRoute,
-  CandidateLoginRoute: CandidateLoginRoute,
   CandidateSignupRoute: CandidateSignupRoute,
 }
 export const routeTree = rootRouteImport

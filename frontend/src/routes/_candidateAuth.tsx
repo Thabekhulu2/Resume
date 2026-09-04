@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_candidateAuth')({
     // from under the user; only enforce on actual navigations.
     if (preload) return;
     if (!session) {
-      throw redirect({ to: '/candidate/login' });
+      throw redirect({ to: '/login' });
     }
     if (role !== 'candidate') {
       throw redirect({ to: '/login' });

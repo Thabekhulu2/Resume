@@ -85,7 +85,7 @@ function CandidateSignupPage() {
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               Already have an account?{' '}
-              <Link to="/candidate/login" className="underline">
+              <Link to="/login" className="underline">
                 Log in
               </Link>
             </p>

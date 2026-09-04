@@ -17,7 +17,7 @@ export const Route = createFileRoute('/_authenticated')({
       throw redirect({ to: '/login' });
     }
     if (role !== 'recruiter') {
-      throw redirect({ to: '/candidate/login' });
+      throw redirect({ to: '/login' });
     }
   },
   component: () => <Outlet />,

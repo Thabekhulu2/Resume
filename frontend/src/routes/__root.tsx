@@ -13,7 +13,7 @@ export const Route = createRootRoute({
   component: RootComponent,
 });
 
-const PUBLIC_PATHS = ['/login', '/candidate/login', '/candidate/signup'];
+const PUBLIC_PATHS = ['/login', '/candidate/signup'];
 
 function RootComponent() {
   const location = useLocation();
@@ -50,12 +50,12 @@ function RoleAwareSidebar() {
 }
 
 function Header() {
-  const { user, role, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   async function handleLogout() {
     await signOut();
-    navigate({ to: role === 'candidate' ? '/candidate/login' : '/login' });
+    navigate({ to: '/login' });
   }
 
   return (

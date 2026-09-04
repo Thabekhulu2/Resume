@@ -1,6 +1,7 @@
 // Resume -> candidate profile feature (spec: docs/specs/0001-resume-candidate-profile.md)
 // Bulk scoring (spec: docs/specs/0002-bulk-candidate-scoring.md) added resume_storage_paths.
-// Accepts { candidate_entity_id?, resume_storage_path | resume_storage_paths, job_description_entity_id?, jd_text?, created_by? },
+// Candidate applications (spec: docs/specs/0010-candidate-job-application.md) added applicant_id.
+// Accepts { candidate_entity_id?, resume_storage_path | resume_storage_paths, job_description_entity_id?, jd_text?, created_by?, applicant_id? },
 // resolves/creates the job_description entity once when only jd_text is given, then triggers
 // ScoreResumeFitWorkflow (once per resume) via the Temporal worker's HTTP trigger (temporal/src/http_trigger.py).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -18,6 +19,7 @@ interface StartScoringRequest {
   jd_text?: string;
   job_title?: string;
   created_by?: string;
+  applicant_id?: string;
 }
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -36,12 +38,13 @@ async function scoreOneResume(
   jdText: string | undefined,
   candidateEntityIdInput: string | undefined,
   createdBy: string | undefined,
+  applicantId: string | undefined,
 ): Promise<{ candidate_entity_id: string; workflow_id: string }> {
   let candidateEntityId = candidateEntityIdInput;
   if (!candidateEntityId) {
     const { data: entity, error: entityError } = await supabase
       .from("entities")
-      .insert({ entity_type: "candidate" })
+      .insert({ entity_type: "candidate", applicant_id: applicantId ?? null })
       .select("id")
       .single();
 
@@ -54,7 +57,11 @@ async function scoreOneResume(
       .insert({
         entity_id: entity.id,
         version_number: 1,
-        data: { resume_file_path: resumeStoragePath, status: "scoring" },
+        data: {
+          resume_file_path: resumeStoragePath,
+          status: "scoring",
+          ...(applicantId ? { applied_to_job_id: jobDescriptionEntityId } : {}),
+        },
       });
 
     if (versionError) {
@@ -162,6 +169,7 @@ Deno.serve(async (req: Request) => {
           jdText,
           undefined,
           body.created_by,
+          body.applicant_id,
         );
         candidates.push(result);
       } catch (error) {
@@ -188,6 +196,7 @@ Deno.serve(async (req: Request) => {
       jdText,
       body.candidate_entity_id,
       body.created_by,
+      body.applicant_id,
     );
   } catch (error) {
     return jsonResponse({ error: error instanceof Error ? error.message : String(error) }, 500);

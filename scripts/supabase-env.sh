@@ -22,3 +22,9 @@ fi
 printf 'export SUPABASE_ANON_KEY=%s\n' "$anon"
 printf 'export SUPABASE_SERVICE_ROLE_KEY=%s\n' "$service"
 printf 'export VITE_SUPABASE_ANON_KEY=%s\n' "$anon"
+
+# supabase start recreates supabase_edge_runtime_<project_id> without a restart
+# policy, and it's known to exit shortly after startup -- keep it auto-restarting
+# so a dead edge runtime doesn't silently break scoring. Output goes to stderr so
+# it doesn't get swallowed by callers that eval this script's stdout.
+docker update --restart unless-stopped "supabase_edge_runtime_resume" >&2 || true

@@ -31,7 +31,7 @@ function RootComponent() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="flex">
-        <Sidebar />
+        <RoleAwareSidebar />
         <main className="flex-1 min-w-0 p-6">
           <Outlet />
         </main>
@@ -41,6 +41,12 @@ function RootComponent() {
       )}
     </div>
   );
+}
+
+/** Candidates never see the Recruitment Team's internal nav. */
+function RoleAwareSidebar() {
+  const { role } = useAuth();
+  return role === 'candidate' ? null : <Sidebar />;
 }
 
 function Header() {

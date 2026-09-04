@@ -38,7 +38,7 @@ function CandidateSignupPage() {
       setError(signUpError);
       return;
     }
-    navigate({ to: '/candidate/login' });
+    navigate({ to: '/apply' });
   }
 
   return (

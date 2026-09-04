@@ -37,7 +37,7 @@ function CandidateLoginPage() {
       setError(signInError);
       return;
     }
-    navigate({ to: '/candidate/login' });
+    navigate({ to: '/apply' });
   }
 
   return (

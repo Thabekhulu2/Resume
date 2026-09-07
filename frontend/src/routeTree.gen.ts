@@ -17,10 +17,12 @@ import { Route as CandidateSignupRouteImport } from './routes/candidate/signup'
 import { Route as CandidateAuthApplyIndexRouteImport } from './routes/_candidateAuth/apply/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedCandidatesIndexRouteImport } from './routes/_authenticated/candidates/index'
+import { Route as AuthenticatedApplicationsIndexRouteImport } from './routes/_authenticated/applications/index'
 import { Route as AuthenticatedCandidatesUploadRouteImport } from './routes/_authenticated/candidates/upload'
 import { Route as AuthenticatedCandidatesIdRouteImport } from './routes/_authenticated/candidates/$id'
 import { Route as AuthenticatedEntitiesEntityTypeIndexRouteImport } from './routes/_authenticated/entities/$entityType/index'
 import { Route as AuthenticatedEntitiesEntityTypeIdRouteImport } from './routes/_authenticated/entities/$entityType/$id'
+import { Route as AuthenticatedApplicationsJobJobIdRouteImport } from './routes/_authenticated/applications/job/$jobId'
 import { Route as AuthenticatedCandidatesRangeMinMaxRouteImport } from './routes/_authenticated/candidates/range/$min/$max'
 
 const LoginRoute = LoginRouteImport.update({
@@ -62,6 +64,12 @@ const AuthenticatedCandidatesIndexRoute =
     path: '/candidates/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedApplicationsIndexRoute =
+  AuthenticatedApplicationsIndexRouteImport.update({
+    id: '/applications/',
+    path: '/applications/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCandidatesUploadRoute =
   AuthenticatedCandidatesUploadRouteImport.update({
     id: '/candidates/upload',
@@ -86,6 +94,12 @@ const AuthenticatedEntitiesEntityTypeIdRoute =
     path: '/entities/$entityType/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedApplicationsJobJobIdRoute =
+  AuthenticatedApplicationsJobJobIdRouteImport.update({
+    id: '/applications/job/$jobId',
+    path: '/applications/job/$jobId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCandidatesRangeMinMaxRoute =
   AuthenticatedCandidatesRangeMinMaxRouteImport.update({
     id: '/candidates/range/$min/$max',
@@ -99,9 +113,11 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/candidates/$id': typeof AuthenticatedCandidatesIdRoute
   '/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
+  '/applications': typeof AuthenticatedApplicationsIndexRoute
   '/candidates': typeof AuthenticatedCandidatesIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/apply': typeof CandidateAuthApplyIndexRoute
+  '/applications/job/$jobId': typeof AuthenticatedApplicationsJobJobIdRoute
   '/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof AuthenticatedEntitiesEntityTypeIndexRoute
   '/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
@@ -112,9 +128,11 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/candidates/$id': typeof AuthenticatedCandidatesIdRoute
   '/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
+  '/applications': typeof AuthenticatedApplicationsIndexRoute
   '/candidates': typeof AuthenticatedCandidatesIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/apply': typeof CandidateAuthApplyIndexRoute
+  '/applications/job/$jobId': typeof AuthenticatedApplicationsJobJobIdRoute
   '/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof AuthenticatedEntitiesEntityTypeIndexRoute
   '/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
@@ -128,9 +146,11 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/candidates/$id': typeof AuthenticatedCandidatesIdRoute
   '/_authenticated/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
+  '/_authenticated/applications/': typeof AuthenticatedApplicationsIndexRoute
   '/_authenticated/candidates/': typeof AuthenticatedCandidatesIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_candidateAuth/apply/': typeof CandidateAuthApplyIndexRoute
+  '/_authenticated/applications/job/$jobId': typeof AuthenticatedApplicationsJobJobIdRoute
   '/_authenticated/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/_authenticated/entities/$entityType/': typeof AuthenticatedEntitiesEntityTypeIndexRoute
   '/_authenticated/candidates/range/$min/$max': typeof AuthenticatedCandidatesRangeMinMaxRoute
@@ -143,9 +163,11 @@ export interface FileRouteTypes {
     | '/'
     | '/candidates/$id'
     | '/candidates/upload'
+    | '/applications'
     | '/candidates'
     | '/jobs'
     | '/apply'
+    | '/applications/job/$jobId'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
     | '/candidates/range/$min/$max'
@@ -156,9 +178,11 @@ export interface FileRouteTypes {
     | '/'
     | '/candidates/$id'
     | '/candidates/upload'
+    | '/applications'
     | '/candidates'
     | '/jobs'
     | '/apply'
+    | '/applications/job/$jobId'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
     | '/candidates/range/$min/$max'
@@ -171,9 +195,11 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/candidates/$id'
     | '/_authenticated/candidates/upload'
+    | '/_authenticated/applications/'
     | '/_authenticated/candidates/'
     | '/_authenticated/jobs/'
     | '/_candidateAuth/apply/'
+    | '/_authenticated/applications/job/$jobId'
     | '/_authenticated/entities/$entityType/$id'
     | '/_authenticated/entities/$entityType/'
     | '/_authenticated/candidates/range/$min/$max'
@@ -244,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCandidatesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/applications/': {
+      id: '/_authenticated/applications/'
+      path: '/applications'
+      fullPath: '/applications'
+      preLoaderRoute: typeof AuthenticatedApplicationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/candidates/upload': {
       id: '/_authenticated/candidates/upload'
       path: '/candidates/upload'
@@ -272,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEntitiesEntityTypeIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/applications/job/$jobId': {
+      id: '/_authenticated/applications/job/$jobId'
+      path: '/applications/job/$jobId'
+      fullPath: '/applications/job/$jobId'
+      preLoaderRoute: typeof AuthenticatedApplicationsJobJobIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/candidates/range/$min/$max': {
       id: '/_authenticated/candidates/range/$min/$max'
       path: '/candidates/range/$min/$max'
@@ -286,8 +326,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCandidatesIdRoute: typeof AuthenticatedCandidatesIdRoute
   AuthenticatedCandidatesUploadRoute: typeof AuthenticatedCandidatesUploadRoute
+  AuthenticatedApplicationsIndexRoute: typeof AuthenticatedApplicationsIndexRoute
   AuthenticatedCandidatesIndexRoute: typeof AuthenticatedCandidatesIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
+  AuthenticatedApplicationsJobJobIdRoute: typeof AuthenticatedApplicationsJobJobIdRoute
   AuthenticatedEntitiesEntityTypeIdRoute: typeof AuthenticatedEntitiesEntityTypeIdRoute
   AuthenticatedEntitiesEntityTypeIndexRoute: typeof AuthenticatedEntitiesEntityTypeIndexRoute
   AuthenticatedCandidatesRangeMinMaxRoute: typeof AuthenticatedCandidatesRangeMinMaxRoute
@@ -297,8 +339,11 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCandidatesIdRoute: AuthenticatedCandidatesIdRoute,
   AuthenticatedCandidatesUploadRoute: AuthenticatedCandidatesUploadRoute,
+  AuthenticatedApplicationsIndexRoute: AuthenticatedApplicationsIndexRoute,
   AuthenticatedCandidatesIndexRoute: AuthenticatedCandidatesIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
+  AuthenticatedApplicationsJobJobIdRoute:
+    AuthenticatedApplicationsJobJobIdRoute,
   AuthenticatedEntitiesEntityTypeIdRoute:
     AuthenticatedEntitiesEntityTypeIdRoute,
   AuthenticatedEntitiesEntityTypeIndexRoute:

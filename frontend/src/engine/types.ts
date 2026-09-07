@@ -112,6 +112,8 @@ export interface FilterDefinition {
   op: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'ilike' | 'in' | 'is' | 'contains' | 'containedBy';
   /** Value can be an expression */
   value: unknown;
+  /** Expression; when present and falsy, this filter is skipped entirely (not applied) */
+  if?: string;
 }
 
 /**

@@ -64,9 +64,10 @@ export function buildSupabaseQuery(
   // Start with the table and select
   let query = client.from(source.table).select(source.select || '*');
 
-  // Apply filters
+  // Apply filters (a filter with a falsy `if` is skipped entirely)
   if (source.filters) {
     for (const filter of source.filters) {
+      if (filter.if && !evaluateExpression(filter.if, context)) continue;
       query = applyFilter(query, filter, context) as typeof query;
     }
   }

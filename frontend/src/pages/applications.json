@@ -1,0 +1,114 @@
+{
+  "id": "applications",
+  "title": "Applications",
+  "state": {
+    "jobStatusFilter": "all"
+  },
+  "dataSources": {
+    "jobs": {
+      "type": "supabase",
+      "table": "entities",
+      "select": "id, entity_versions!inner(data, is_current)",
+      "filters": [
+        { "field": "entity_type", "op": "eq", "value": "job_description" },
+        { "field": "entity_versions.is_current", "op": "eq", "value": true },
+        {
+          "field": "entity_versions.data->>status",
+          "op": "eq",
+          "value": "{{state.jobStatusFilter}}",
+          "if": "{{state.jobStatusFilter !== 'all'}}"
+        },
+        {
+          "field": "entity_versions.data->>status",
+          "op": "in",
+          "value": ["open", "closed"],
+          "if": "{{state.jobStatusFilter === 'all'}}"
+        }
+      ],
+      "order": [{ "column": "created_at", "ascending": false }]
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "spacing": 1 },
+        "children": [
+          { "type": "Heading", "props": { "level": 1, "children": "Applications" } },
+          { "type": "Text", "props": { "variant": "muted", "children": "Candidates who applied to a job posting" } }
+        ]
+      },
+      {
+        "type": "Stack",
+        "props": { "direction": "horizontal", "spacing": 2 },
+        "children": [
+          {
+            "type": "Button",
+            "props": {
+              "children": "Open",
+              "size": "sm",
+              "variant": "{{state.jobStatusFilter === 'open' ? 'default' : 'outline'}}",
+              "onClick": { "action": "setState", "key": "jobStatusFilter", "value": "open" }
+            }
+          },
+          {
+            "type": "Button",
+            "props": {
+              "children": "Closed",
+              "size": "sm",
+              "variant": "{{state.jobStatusFilter === 'closed' ? 'default' : 'outline'}}",
+              "onClick": { "action": "setState", "key": "jobStatusFilter", "value": "closed" }
+            }
+          },
+          {
+            "type": "Button",
+            "props": {
+              "children": "All jobs",
+              "size": "sm",
+              "variant": "{{state.jobStatusFilter === 'all' ? 'default' : 'outline'}}",
+              "onClick": { "action": "setState", "key": "jobStatusFilter", "value": "all" }
+            }
+          }
+        ]
+      },
+      {
+        "type": "Grid",
+        "props": { "columns": 3, "gap": 4 },
+        "children": [
+          {
+            "type": "Link",
+            "each": "{{data.jobs}}",
+            "as": "job",
+            "key": "{{job.id}}",
+            "props": {
+              "to": "/applications/job/{{job.id}}",
+              "className": "flex flex-col items-start gap-2 whitespace-normal rounded-sm border border-input bg-background p-4 text-left no-underline text-inherit hover:bg-accent hover:no-underline"
+            },
+            "children": [
+              { "type": "Text", "props": { "weight": "medium", "children": "{{job.entity_versions[0].data.title}}" } },
+              {
+                "type": "Badge",
+                "props": {
+                  "variant": "{{job.entity_versions[0].data.status === 'open' ? 'default' : 'secondary'}}",
+                  "children": "{{job.entity_versions[0].data.status}}"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "if": "{{data.jobs.length === 0}}",
+        "props": { "variant": "muted", "children": "No job postings for this filter." }
+      },
+      {
+        "type": "Text",
+        "if": "{{data.jobs.length > 0}}",
+        "props": { "variant": "muted", "children": "Click a job to see its applicants." }
+      }
+    ]
+  }
+}

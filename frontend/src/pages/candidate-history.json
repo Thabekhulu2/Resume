@@ -9,7 +9,7 @@
     "candidates": {
       "type": "supabase",
       "table": "entities",
-      "select": "*, entity_versions(*), entity_facts(*)",
+      "select": "*, entity_versions(*), entity_facts(*), relationships_v2!relationships_v2_child_id_fkey(is_current, job:entities!relationships_v2_parent_id_fkey(entity_versions(data, is_current)))",
       "filters": [
         { "field": "entity_type", "op": "eq", "value": "candidate" },
         { "field": "entity_versions.is_current", "op": "eq", "value": true }
@@ -107,6 +107,15 @@
                           {
                             "type": "Text",
                             "props": { "variant": "muted", "size": "sm", "children": "Uploaded {{candidate.created_at}}" }
+                          },
+                          {
+                            "type": "Text",
+                            "if": "{{candidate.relationships_v2[0].job.entity_versions[0].data.title}}",
+                            "props": {
+                              "variant": "muted",
+                              "size": "sm",
+                              "children": "Scored against {{candidate.relationships_v2[0].job.entity_versions[0].data.title}}"
+                            }
                           }
                         ]
                       }

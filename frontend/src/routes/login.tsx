@@ -4,7 +4,7 @@
  */
 
 import { useState, type FormEvent } from 'react';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -75,6 +75,12 @@ function LoginPage() {
               {submitting ? 'Signing in...' : 'Sign in'}
             </Button>
           </form>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            New candidate?{' '}
+            <Link to="/candidate/signup" className="underline underline-offset-4 hover:text-foreground">
+              Sign up
+            </Link>
+          </p>
         </CardContent>
       </Card>
     </div>

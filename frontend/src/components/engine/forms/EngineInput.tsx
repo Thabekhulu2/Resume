@@ -9,7 +9,7 @@ import type { EngineComponentProps, ActionDefinition } from '@/engine/types';
 import { useUIEngine, useItemContext } from '@/engine/UIEngineContext';
 
 interface EngineInputProps extends EngineComponentProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date' | 'datetime-local';
   value?: string | number;
   onChange?: ActionDefinition;
   onBlur?: ActionDefinition;

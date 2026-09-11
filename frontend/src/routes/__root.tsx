@@ -18,6 +18,7 @@ import {
   UserCircle,
   Search,
   Settings,
+  Calendar,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
@@ -233,6 +234,19 @@ function Sidebar() {
         >
           <History className="h-4 w-4" />
           Candidate History
+        </Link>
+
+        <Link
+          to="/interviews"
+          className={cn(
+            'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors',
+            location.pathname === '/interviews'
+              ? 'bg-primary text-primary-foreground'
+              : 'hover:bg-muted'
+          )}
+        >
+          <Calendar className="h-4 w-4" />
+          Scheduled Interviews
         </Link>
       </nav>
     </aside>

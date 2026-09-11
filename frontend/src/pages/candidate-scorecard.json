@@ -1,6 +1,11 @@
 {
   "id": "candidate-scorecard",
   "title": "Candidate Scorecard",
+  "state": {
+    "scheduledAt": "",
+    "scheduleNotes": "",
+    "actionError": null
+  },
   "dataSources": {
     "candidate": {
       "type": "supabase",
@@ -41,6 +46,14 @@
       ],
       "single": true,
       "enabled": "{{data.relationships.length > 0}}"
+    },
+    "decision": {
+      "type": "supabase",
+      "table": "application_decisions",
+      "select": "*",
+      "filters": [{ "field": "candidate_id", "op": "eq", "value": "{{params.id}}" }],
+      "order": [{ "column": "created_at", "ascending": false }],
+      "limit": 1
     }
   },
   "layout": {
@@ -57,19 +70,11 @@
             "children": [
               {
                 "type": "Link",
-                "props": { "to": "/candidates/upload", "children": "Score another candidate" }
+                "props": { "to": "/candidates", "children": "← Back to Candidate History" }
               },
               {
                 "type": "Heading",
-                "props": { "level": 1, "children": "Candidate Scorecard" }
-              },
-              {
-                "type": "Text",
-                "if": "{{data.candidate.entity_versions[0].data.name}}",
-                "props": {
-                  "weight": "medium",
-                  "children": "{{data.candidate.entity_versions[0].data.name}}"
-                }
+                "props": { "level": 1, "children": "{{data.candidate.entity_versions[0].data.name || 'Candidate Scorecard'}}" }
               },
               {
                 "type": "Text",
@@ -91,7 +96,8 @@
                 "actions": [
                   { "action": "refetch", "source": "candidate" },
                   { "action": "refetch", "source": "facts" },
-                  { "action": "refetch", "source": "relationships" }
+                  { "action": "refetch", "source": "relationships" },
+                  { "action": "refetch", "source": "decision" }
                 ]
               }
             }
@@ -117,6 +123,84 @@
         }
       },
       {
+        "type": "Alert",
+        "if": "{{state.actionError}}",
+        "props": { "variant": "destructive", "title": "{{state.actionError}}" }
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "justify": "between", "align": "center", "wrap": true },
+            "children": [
+              {
+                "type": "Badge",
+                "props": { "variant": "{{data.candidate.entity_versions[0].data.status ? 'default' : 'outline'}}", "children": "1. Applied" }
+              },
+              {
+                "type": "Badge",
+                "props": { "variant": "{{data.candidate.entity_versions[0].data.status ? 'default' : 'outline'}}", "children": "2. Screening" }
+              },
+              {
+                "type": "Badge",
+                "props": {
+                  "variant": "{{data.candidate.entity_versions[0].data.status === 'scored' ? 'default' : data.candidate.entity_versions[0].data.status === 'failed' ? 'default' : 'outline'}}",
+                  "children": "3. Assessment"
+                }
+              },
+              {
+                "type": "Badge",
+                "props": {
+                  "variant": "{{data.decision[0].decision === 'shortlisted' ? 'default' : data.decision[0].decision === 'interview_scheduled' ? 'default' : data.decision[0].decision === 'rejected' ? 'default' : 'outline'}}",
+                  "children": "4. Interview"
+                }
+              },
+              {
+                "type": "Badge",
+                "props": {
+                  "variant": "{{data.decision[0].decision === 'rejected' ? 'default' : 'outline'}}",
+                  "children": "5. Decision"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Stack",
+        "props": { "direction": "horizontal", "justify": "between", "align": "center" },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "spacing": 2, "align": "center" },
+            "children": [
+              { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Application status" } },
+              {
+                "type": "Badge",
+                "if": "{{data.decision[0].decision === 'shortlisted'}}",
+                "props": { "children": "Shortlisted" }
+              },
+              {
+                "type": "Badge",
+                "if": "{{data.decision[0].decision === 'interview_scheduled'}}",
+                "props": { "children": "Interview Scheduled" }
+              },
+              {
+                "type": "Badge",
+                "if": "{{data.decision[0].decision === 'rejected'}}",
+                "props": { "variant": "destructive", "children": "Rejected" }
+              },
+              {
+                "type": "Text",
+                "if": "{{!data.decision || data.decision.length === 0}}",
+                "props": { "variant": "muted", "size": "sm", "children": "No decision yet" }
+              }
+            ]
+          }
+        ]
+      },
+      {
         "type": "Grid",
         "props": { "columns": 2, "gap": 6 },
         "children": [
@@ -132,10 +216,10 @@
                     "type": "Stack",
                     "props": { "spacing": 1 },
                     "children": [
-                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Extracted skills" } },
+                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Matched skills" } },
                       {
                         "type": "Stack",
-                        "props": { "direction": "horizontal", "spacing": 2, "className": "flex-wrap" },
+                        "props": { "direction": "horizontal", "spacing": 2, "wrap": true },
                         "children": [
                           {
                             "type": "Badge",
@@ -212,7 +296,7 @@
                     "type": "Stack",
                     "props": { "spacing": 1 },
                     "children": [
-                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Reasoning" } },
+                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Why this score" } },
                       { "type": "Text", "props": { "children": "{{data.facts[0].metadata.reasoning}}" } }
                     ]
                   }
@@ -226,7 +310,153 @@
             ]
           }
         ]
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "spacing": 3, "wrap": true },
+            "children": [
+              {
+                "type": "Button",
+                "props": {
+                  "children": "Shortlist",
+                  "onClick": {
+                    "action": "sequence",
+                    "actions": [
+                      { "action": "setState", "key": "actionError", "value": null },
+                      {
+                        "action": "apiCall",
+                        "operation": "rpc",
+                        "function": "record_recruiter_decision",
+                        "data": { "p_candidate_id": "{{params.id}}", "p_decision": "shortlisted" },
+                        "onSuccess": { "action": "refetch", "source": "decision" },
+                        "onError": { "action": "setState", "key": "actionError", "value": "Failed to record decision. Please try again." }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "outline",
+                  "children": "Schedule Interview",
+                  "onClick": {
+                    "action": "sequence",
+                    "actions": [
+                      { "action": "setState", "key": "scheduledAt", "value": "" },
+                      { "action": "setState", "key": "scheduleNotes", "value": "" },
+                      { "action": "openModal", "modalId": "scheduleInterviewModal" }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "destructive",
+                  "children": "Reject",
+                  "onClick": {
+                    "action": "sequence",
+                    "actions": [
+                      { "action": "setState", "key": "actionError", "value": null },
+                      {
+                        "action": "apiCall",
+                        "operation": "rpc",
+                        "function": "record_recruiter_decision",
+                        "data": { "p_candidate_id": "{{params.id}}", "p_decision": "rejected" },
+                        "onSuccess": { "action": "refetch", "source": "decision" },
+                        "onError": { "action": "setState", "key": "actionError", "value": "Failed to record decision. Please try again." }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "Link",
+                "props": { "to": "/candidates", "children": "Close" }
+              }
+            ]
+          }
+        ]
       }
     ]
+  },
+  "modals": {
+    "scheduleInterviewModal": {
+      "title": "Schedule Interview",
+      "size": "sm",
+      "content": {
+        "type": "Stack",
+        "props": { "spacing": 4 },
+        "children": [
+          {
+            "type": "Input",
+            "props": {
+              "type": "datetime-local",
+              "label": "Date & time",
+              "value": "{{state.scheduledAt}}",
+              "onChange": { "action": "setState", "key": "scheduledAt", "value": "{{event.target.value}}" }
+            }
+          },
+          {
+            "type": "Textarea",
+            "props": {
+              "label": "Notes (optional)",
+              "value": "{{state.scheduleNotes}}",
+              "onChange": { "action": "setState", "key": "scheduleNotes", "value": "{{event.target.value}}" }
+            }
+          },
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "justify": "end", "spacing": 2 },
+            "children": [
+              {
+                "type": "Button",
+                "props": {
+                  "variant": "outline",
+                  "children": "Cancel",
+                  "onClick": { "action": "closeModal", "modalId": "scheduleInterviewModal" }
+                }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "children": "Confirm",
+                  "disabled": "{{!state.scheduledAt}}",
+                  "onClick": {
+                    "action": "sequence",
+                    "actions": [
+                      { "action": "setState", "key": "actionError", "value": null },
+                      {
+                        "action": "apiCall",
+                        "operation": "rpc",
+                        "function": "record_recruiter_decision",
+                        "data": {
+                          "p_candidate_id": "{{params.id}}",
+                          "p_decision": "interview_scheduled",
+                          "p_scheduled_at": "{{state.scheduledAt}}",
+                          "p_notes": "{{state.scheduleNotes}}"
+                        },
+                        "onSuccess": {
+                          "action": "sequence",
+                          "actions": [
+                            { "action": "closeModal", "modalId": "scheduleInterviewModal" },
+                            { "action": "refetch", "source": "decision" }
+                          ]
+                        },
+                        "onError": { "action": "setState", "key": "actionError", "value": "Failed to schedule interview. Please try again." }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
   }
 }

@@ -24,6 +24,7 @@ import { Route as CandidateAuthJobAlertsIndexRouteImport } from './routes/_candi
 import { Route as CandidateAuthDashboardIndexRouteImport } from './routes/_candidateAuth/dashboard/index'
 import { Route as CandidateAuthApplyIndexRouteImport } from './routes/_candidateAuth/apply/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
+import { Route as AuthenticatedInterviewsIndexRouteImport } from './routes/_authenticated/interviews/index'
 import { Route as AuthenticatedCandidatesIndexRouteImport } from './routes/_authenticated/candidates/index'
 import { Route as AuthenticatedApplicationsIndexRouteImport } from './routes/_authenticated/applications/index'
 import { Route as AuthenticatedCandidatesUploadRouteImport } from './routes/_authenticated/candidates/upload'
@@ -114,6 +115,12 @@ const AuthenticatedJobsIndexRoute = AuthenticatedJobsIndexRouteImport.update({
   path: '/jobs/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedInterviewsIndexRoute =
+  AuthenticatedInterviewsIndexRouteImport.update({
+    id: '/interviews/',
+    path: '/interviews/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCandidatesIndexRoute =
   AuthenticatedCandidatesIndexRouteImport.update({
     id: '/candidates/',
@@ -171,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
   '/applications': typeof AuthenticatedApplicationsIndexRoute
   '/candidates': typeof AuthenticatedCandidatesIndexRoute
+  '/interviews': typeof AuthenticatedInterviewsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/apply': typeof CandidateAuthApplyIndexRoute
   '/dashboard': typeof CandidateAuthDashboardIndexRoute
@@ -194,6 +202,7 @@ export interface FileRoutesByTo {
   '/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
   '/applications': typeof AuthenticatedApplicationsIndexRoute
   '/candidates': typeof AuthenticatedCandidatesIndexRoute
+  '/interviews': typeof AuthenticatedInterviewsIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/apply': typeof CandidateAuthApplyIndexRoute
   '/dashboard': typeof CandidateAuthDashboardIndexRoute
@@ -220,6 +229,7 @@ export interface FileRoutesById {
   '/_authenticated/candidates/upload': typeof AuthenticatedCandidatesUploadRoute
   '/_authenticated/applications/': typeof AuthenticatedApplicationsIndexRoute
   '/_authenticated/candidates/': typeof AuthenticatedCandidatesIndexRoute
+  '/_authenticated/interviews/': typeof AuthenticatedInterviewsIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_candidateAuth/apply/': typeof CandidateAuthApplyIndexRoute
   '/_candidateAuth/dashboard/': typeof CandidateAuthDashboardIndexRoute
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/candidates/upload'
     | '/applications'
     | '/candidates'
+    | '/interviews'
     | '/jobs'
     | '/apply'
     | '/dashboard'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/candidates/upload'
     | '/applications'
     | '/candidates'
+    | '/interviews'
     | '/jobs'
     | '/apply'
     | '/dashboard'
@@ -293,6 +305,7 @@ export interface FileRouteTypes {
     | '/_authenticated/candidates/upload'
     | '/_authenticated/applications/'
     | '/_authenticated/candidates/'
+    | '/_authenticated/interviews/'
     | '/_authenticated/jobs/'
     | '/_candidateAuth/apply/'
     | '/_candidateAuth/dashboard/'
@@ -423,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/interviews/': {
+      id: '/_authenticated/interviews/'
+      path: '/interviews'
+      fullPath: '/interviews'
+      preLoaderRoute: typeof AuthenticatedInterviewsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/candidates/': {
       id: '/_authenticated/candidates/'
       path: '/candidates'
@@ -488,6 +508,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCandidatesUploadRoute: typeof AuthenticatedCandidatesUploadRoute
   AuthenticatedApplicationsIndexRoute: typeof AuthenticatedApplicationsIndexRoute
   AuthenticatedCandidatesIndexRoute: typeof AuthenticatedCandidatesIndexRoute
+  AuthenticatedInterviewsIndexRoute: typeof AuthenticatedInterviewsIndexRoute
   AuthenticatedJobsIndexRoute: typeof AuthenticatedJobsIndexRoute
   AuthenticatedApplicationsJobJobIdRoute: typeof AuthenticatedApplicationsJobJobIdRoute
   AuthenticatedEntitiesEntityTypeIdRoute: typeof AuthenticatedEntitiesEntityTypeIdRoute
@@ -501,6 +522,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCandidatesUploadRoute: AuthenticatedCandidatesUploadRoute,
   AuthenticatedApplicationsIndexRoute: AuthenticatedApplicationsIndexRoute,
   AuthenticatedCandidatesIndexRoute: AuthenticatedCandidatesIndexRoute,
+  AuthenticatedInterviewsIndexRoute: AuthenticatedInterviewsIndexRoute,
   AuthenticatedJobsIndexRoute: AuthenticatedJobsIndexRoute,
   AuthenticatedApplicationsJobJobIdRoute:
     AuthenticatedApplicationsJobJobIdRoute,

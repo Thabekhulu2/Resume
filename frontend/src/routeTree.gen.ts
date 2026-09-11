@@ -14,6 +14,14 @@ import { Route as CandidateAuthRouteImport } from './routes/_candidateAuth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as CandidateSignupRouteImport } from './routes/candidate/signup'
+import { Route as CandidateAuthSettingsIndexRouteImport } from './routes/_candidateAuth/settings/index'
+import { Route as CandidateAuthSavedJobsIndexRouteImport } from './routes/_candidateAuth/saved-jobs/index'
+import { Route as CandidateAuthProfileIndexRouteImport } from './routes/_candidateAuth/profile/index'
+import { Route as CandidateAuthNotificationsIndexRouteImport } from './routes/_candidateAuth/notifications/index'
+import { Route as CandidateAuthMyApplicationsIndexRouteImport } from './routes/_candidateAuth/my-applications/index'
+import { Route as CandidateAuthMessagesIndexRouteImport } from './routes/_candidateAuth/messages/index'
+import { Route as CandidateAuthJobAlertsIndexRouteImport } from './routes/_candidateAuth/job-alerts/index'
+import { Route as CandidateAuthDashboardIndexRouteImport } from './routes/_candidateAuth/dashboard/index'
 import { Route as CandidateAuthApplyIndexRouteImport } from './routes/_candidateAuth/apply/index'
 import { Route as AuthenticatedJobsIndexRouteImport } from './routes/_authenticated/jobs/index'
 import { Route as AuthenticatedCandidatesIndexRouteImport } from './routes/_authenticated/candidates/index'
@@ -48,6 +56,54 @@ const CandidateSignupRoute = CandidateSignupRouteImport.update({
   path: '/candidate/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CandidateAuthSettingsIndexRoute =
+  CandidateAuthSettingsIndexRouteImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => CandidateAuthRoute,
+  } as any)
+const CandidateAuthSavedJobsIndexRoute =
+  CandidateAuthSavedJobsIndexRouteImport.update({
+    id: '/saved-jobs/',
+    path: '/saved-jobs/',
+    getParentRoute: () => CandidateAuthRoute,
+  } as any)
+const CandidateAuthProfileIndexRoute =
+  CandidateAuthProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => CandidateAuthRoute,
+  } as any)
+const CandidateAuthNotificationsIndexRoute =
+  CandidateAuthNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => CandidateAuthRoute,
+  } as any)
+const CandidateAuthMyApplicationsIndexRoute =
+  CandidateAuthMyApplicationsIndexRouteImport.update({
+    id: '/my-applications/',
+    path: '/my-applications/',
+    getParentRoute: () => CandidateAuthRoute,
+  } as any)
+const CandidateAuthMessagesIndexRoute =
+  CandidateAuthMessagesIndexRouteImport.update({
+    id: '/messages/',
+    path: '/messages/',
+    getParentRoute: () => CandidateAuthRoute,
+  } as any)
+const CandidateAuthJobAlertsIndexRoute =
+  CandidateAuthJobAlertsIndexRouteImport.update({
+    id: '/job-alerts/',
+    path: '/job-alerts/',
+    getParentRoute: () => CandidateAuthRoute,
+  } as any)
+const CandidateAuthDashboardIndexRoute =
+  CandidateAuthDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => CandidateAuthRoute,
+  } as any)
 const CandidateAuthApplyIndexRoute = CandidateAuthApplyIndexRouteImport.update({
   id: '/apply/',
   path: '/apply/',
@@ -117,6 +173,14 @@ export interface FileRoutesByFullPath {
   '/candidates': typeof AuthenticatedCandidatesIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/apply': typeof CandidateAuthApplyIndexRoute
+  '/dashboard': typeof CandidateAuthDashboardIndexRoute
+  '/job-alerts': typeof CandidateAuthJobAlertsIndexRoute
+  '/messages': typeof CandidateAuthMessagesIndexRoute
+  '/my-applications': typeof CandidateAuthMyApplicationsIndexRoute
+  '/notifications': typeof CandidateAuthNotificationsIndexRoute
+  '/profile': typeof CandidateAuthProfileIndexRoute
+  '/saved-jobs': typeof CandidateAuthSavedJobsIndexRoute
+  '/settings': typeof CandidateAuthSettingsIndexRoute
   '/applications/job/$jobId': typeof AuthenticatedApplicationsJobJobIdRoute
   '/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof AuthenticatedEntitiesEntityTypeIndexRoute
@@ -132,6 +196,14 @@ export interface FileRoutesByTo {
   '/candidates': typeof AuthenticatedCandidatesIndexRoute
   '/jobs': typeof AuthenticatedJobsIndexRoute
   '/apply': typeof CandidateAuthApplyIndexRoute
+  '/dashboard': typeof CandidateAuthDashboardIndexRoute
+  '/job-alerts': typeof CandidateAuthJobAlertsIndexRoute
+  '/messages': typeof CandidateAuthMessagesIndexRoute
+  '/my-applications': typeof CandidateAuthMyApplicationsIndexRoute
+  '/notifications': typeof CandidateAuthNotificationsIndexRoute
+  '/profile': typeof CandidateAuthProfileIndexRoute
+  '/saved-jobs': typeof CandidateAuthSavedJobsIndexRoute
+  '/settings': typeof CandidateAuthSettingsIndexRoute
   '/applications/job/$jobId': typeof AuthenticatedApplicationsJobJobIdRoute
   '/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/entities/$entityType': typeof AuthenticatedEntitiesEntityTypeIndexRoute
@@ -150,6 +222,14 @@ export interface FileRoutesById {
   '/_authenticated/candidates/': typeof AuthenticatedCandidatesIndexRoute
   '/_authenticated/jobs/': typeof AuthenticatedJobsIndexRoute
   '/_candidateAuth/apply/': typeof CandidateAuthApplyIndexRoute
+  '/_candidateAuth/dashboard/': typeof CandidateAuthDashboardIndexRoute
+  '/_candidateAuth/job-alerts/': typeof CandidateAuthJobAlertsIndexRoute
+  '/_candidateAuth/messages/': typeof CandidateAuthMessagesIndexRoute
+  '/_candidateAuth/my-applications/': typeof CandidateAuthMyApplicationsIndexRoute
+  '/_candidateAuth/notifications/': typeof CandidateAuthNotificationsIndexRoute
+  '/_candidateAuth/profile/': typeof CandidateAuthProfileIndexRoute
+  '/_candidateAuth/saved-jobs/': typeof CandidateAuthSavedJobsIndexRoute
+  '/_candidateAuth/settings/': typeof CandidateAuthSettingsIndexRoute
   '/_authenticated/applications/job/$jobId': typeof AuthenticatedApplicationsJobJobIdRoute
   '/_authenticated/entities/$entityType/$id': typeof AuthenticatedEntitiesEntityTypeIdRoute
   '/_authenticated/entities/$entityType/': typeof AuthenticatedEntitiesEntityTypeIndexRoute
@@ -167,6 +247,14 @@ export interface FileRouteTypes {
     | '/candidates'
     | '/jobs'
     | '/apply'
+    | '/dashboard'
+    | '/job-alerts'
+    | '/messages'
+    | '/my-applications'
+    | '/notifications'
+    | '/profile'
+    | '/saved-jobs'
+    | '/settings'
     | '/applications/job/$jobId'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
@@ -182,6 +270,14 @@ export interface FileRouteTypes {
     | '/candidates'
     | '/jobs'
     | '/apply'
+    | '/dashboard'
+    | '/job-alerts'
+    | '/messages'
+    | '/my-applications'
+    | '/notifications'
+    | '/profile'
+    | '/saved-jobs'
+    | '/settings'
     | '/applications/job/$jobId'
     | '/entities/$entityType/$id'
     | '/entities/$entityType'
@@ -199,6 +295,14 @@ export interface FileRouteTypes {
     | '/_authenticated/candidates/'
     | '/_authenticated/jobs/'
     | '/_candidateAuth/apply/'
+    | '/_candidateAuth/dashboard/'
+    | '/_candidateAuth/job-alerts/'
+    | '/_candidateAuth/messages/'
+    | '/_candidateAuth/my-applications/'
+    | '/_candidateAuth/notifications/'
+    | '/_candidateAuth/profile/'
+    | '/_candidateAuth/saved-jobs/'
+    | '/_candidateAuth/settings/'
     | '/_authenticated/applications/job/$jobId'
     | '/_authenticated/entities/$entityType/$id'
     | '/_authenticated/entities/$entityType/'
@@ -248,6 +352,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/candidate/signup'
       preLoaderRoute: typeof CandidateSignupRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_candidateAuth/settings/': {
+      id: '/_candidateAuth/settings/'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof CandidateAuthSettingsIndexRouteImport
+      parentRoute: typeof CandidateAuthRoute
+    }
+    '/_candidateAuth/saved-jobs/': {
+      id: '/_candidateAuth/saved-jobs/'
+      path: '/saved-jobs'
+      fullPath: '/saved-jobs'
+      preLoaderRoute: typeof CandidateAuthSavedJobsIndexRouteImport
+      parentRoute: typeof CandidateAuthRoute
+    }
+    '/_candidateAuth/profile/': {
+      id: '/_candidateAuth/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof CandidateAuthProfileIndexRouteImport
+      parentRoute: typeof CandidateAuthRoute
+    }
+    '/_candidateAuth/notifications/': {
+      id: '/_candidateAuth/notifications/'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof CandidateAuthNotificationsIndexRouteImport
+      parentRoute: typeof CandidateAuthRoute
+    }
+    '/_candidateAuth/my-applications/': {
+      id: '/_candidateAuth/my-applications/'
+      path: '/my-applications'
+      fullPath: '/my-applications'
+      preLoaderRoute: typeof CandidateAuthMyApplicationsIndexRouteImport
+      parentRoute: typeof CandidateAuthRoute
+    }
+    '/_candidateAuth/messages/': {
+      id: '/_candidateAuth/messages/'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof CandidateAuthMessagesIndexRouteImport
+      parentRoute: typeof CandidateAuthRoute
+    }
+    '/_candidateAuth/job-alerts/': {
+      id: '/_candidateAuth/job-alerts/'
+      path: '/job-alerts'
+      fullPath: '/job-alerts'
+      preLoaderRoute: typeof CandidateAuthJobAlertsIndexRouteImport
+      parentRoute: typeof CandidateAuthRoute
+    }
+    '/_candidateAuth/dashboard/': {
+      id: '/_candidateAuth/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof CandidateAuthDashboardIndexRouteImport
+      parentRoute: typeof CandidateAuthRoute
     }
     '/_candidateAuth/apply/': {
       id: '/_candidateAuth/apply/'
@@ -358,10 +518,26 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 interface CandidateAuthRouteChildren {
   CandidateAuthApplyIndexRoute: typeof CandidateAuthApplyIndexRoute
+  CandidateAuthDashboardIndexRoute: typeof CandidateAuthDashboardIndexRoute
+  CandidateAuthJobAlertsIndexRoute: typeof CandidateAuthJobAlertsIndexRoute
+  CandidateAuthMessagesIndexRoute: typeof CandidateAuthMessagesIndexRoute
+  CandidateAuthMyApplicationsIndexRoute: typeof CandidateAuthMyApplicationsIndexRoute
+  CandidateAuthNotificationsIndexRoute: typeof CandidateAuthNotificationsIndexRoute
+  CandidateAuthProfileIndexRoute: typeof CandidateAuthProfileIndexRoute
+  CandidateAuthSavedJobsIndexRoute: typeof CandidateAuthSavedJobsIndexRoute
+  CandidateAuthSettingsIndexRoute: typeof CandidateAuthSettingsIndexRoute
 }
 
 const CandidateAuthRouteChildren: CandidateAuthRouteChildren = {
   CandidateAuthApplyIndexRoute: CandidateAuthApplyIndexRoute,
+  CandidateAuthDashboardIndexRoute: CandidateAuthDashboardIndexRoute,
+  CandidateAuthJobAlertsIndexRoute: CandidateAuthJobAlertsIndexRoute,
+  CandidateAuthMessagesIndexRoute: CandidateAuthMessagesIndexRoute,
+  CandidateAuthMyApplicationsIndexRoute: CandidateAuthMyApplicationsIndexRoute,
+  CandidateAuthNotificationsIndexRoute: CandidateAuthNotificationsIndexRoute,
+  CandidateAuthProfileIndexRoute: CandidateAuthProfileIndexRoute,
+  CandidateAuthSavedJobsIndexRoute: CandidateAuthSavedJobsIndexRoute,
+  CandidateAuthSettingsIndexRoute: CandidateAuthSettingsIndexRoute,
 }
 
 const CandidateAuthRouteWithChildren = CandidateAuthRoute._addFileChildren(

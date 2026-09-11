@@ -1,0 +1,178 @@
+{
+  "id": "candidate-profile",
+  "title": "My Profile",
+  "state": {
+    "firstName": "",
+    "surname": "",
+    "email": "",
+    "phone": "",
+    "summary": "Add a short professional summary to help recruiters get to know you."
+  },
+  "dataSources": {
+    "skills": {
+      "type": "static",
+      "data": [{ "name": "Add your skills" }]
+    },
+    "documents": {
+      "type": "static",
+      "data": []
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "spacing": 1 },
+        "children": [
+          { "type": "Heading", "props": { "level": 1, "children": "My Profile" } },
+          { "type": "Text", "props": { "variant": "muted", "children": "Keep your professional information up to date." } }
+        ]
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Grid",
+            "props": { "columns": 2, "gap": 6 },
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "align": "center", "spacing": 3 },
+                "children": [
+                  {
+                    "type": "Container",
+                    "props": { "className": "w-28 h-28 rounded-full bg-primary/10 flex items-center justify-center text-3xl font-semibold text-primary" },
+                    "children": [{ "type": "Text", "props": { "children": "🧑" } }]
+                  },
+                  { "type": "Button", "props": { "variant": "outline", "size": "sm", "children": "Change photo" } }
+                ]
+              },
+              {
+                "type": "Stack",
+                "props": { "spacing": 4 },
+                "children": [
+                  { "type": "Heading", "props": { "level": 2, "children": "Personal Information" } },
+                  {
+                    "type": "Grid",
+                    "props": { "columns": 2, "gap": 4 },
+                    "children": [
+                      {
+                        "type": "Input",
+                        "props": {
+                          "label": "First Name",
+                          "value": "{{state.firstName}}",
+                          "onChange": { "action": "setState", "key": "firstName", "value": "{{event.target.value}}" }
+                        }
+                      },
+                      {
+                        "type": "Input",
+                        "props": {
+                          "label": "Surname",
+                          "value": "{{state.surname}}",
+                          "onChange": { "action": "setState", "key": "surname", "value": "{{event.target.value}}" }
+                        }
+                      },
+                      {
+                        "type": "Input",
+                        "props": {
+                          "label": "Email",
+                          "type": "email",
+                          "value": "{{state.email}}",
+                          "onChange": { "action": "setState", "key": "email", "value": "{{event.target.value}}" }
+                        }
+                      },
+                      {
+                        "type": "Input",
+                        "props": {
+                          "label": "Phone",
+                          "value": "{{state.phone}}",
+                          "onChange": { "action": "setState", "key": "phone", "value": "{{event.target.value}}" }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 3 },
+            "children": [
+              { "type": "Heading", "props": { "level": 2, "children": "Professional Summary" } },
+              {
+                "type": "Textarea",
+                "props": {
+                  "value": "{{state.summary}}",
+                  "rows": 4,
+                  "onChange": { "action": "setState", "key": "summary", "value": "{{event.target.value}}" }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 3 },
+            "children": [
+              { "type": "Heading", "props": { "level": 2, "children": "Skills" } },
+              {
+                "type": "Stack",
+                "props": { "direction": "horizontal", "spacing": 2, "wrap": true },
+                "children": [
+                  {
+                    "type": "Badge",
+                    "each": "{{data.skills}}",
+                    "as": "skill",
+                    "key": "{{skill.name}}",
+                    "props": { "variant": "secondary", "children": "{{skill.name}}" }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 3 },
+            "children": [
+              { "type": "Heading", "props": { "level": 2, "children": "Documents" } },
+              {
+                "type": "Text",
+                "if": "{{!data.documents || data.documents.length === 0}}",
+                "props": { "variant": "muted", "size": "sm", "children": "No documents uploaded yet." }
+              },
+              {
+                "type": "Stack",
+                "each": "{{data.documents}}",
+                "as": "doc",
+                "key": "{{doc.name}}",
+                "props": { "direction": "horizontal", "justify": "between", "align": "center", "className": "p-3 border rounded-lg" },
+                "children": [
+                  { "type": "Text", "props": { "children": "📄 {{doc.name}}" } },
+                  { "type": "Button", "props": { "variant": "outline", "size": "sm", "children": "View" } }
+                ]
+              },
+              { "type": "Button", "props": { "variant": "outline", "children": "+ Upload Document" } }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -2,6 +2,7 @@
   "id": "candidate-jobs",
   "title": "Apply for Jobs",
   "state": {
+    "jobSearch": "",
     "resumeFileName": "",
     "resumeStoragePath": null,
     "uploading": false,
@@ -11,7 +12,14 @@
     "myResumeUrl": null,
     "resumeLinkError": null,
     "applyJobId": null,
-    "applyJobTitle": null
+    "applyJobTitle": null,
+    "wizardStep": 1,
+    "wizardWhy": "",
+    "wizardSql": "",
+    "viewJobId": null,
+    "viewJobTitle": null,
+    "viewJobLocation": null,
+    "viewJobDesc": null
   },
   "dataSources": {
     "openJobs": {
@@ -30,7 +38,7 @@
         "props": { "spacing": 1 },
         "children": [
           { "type": "Heading", "props": { "level": 1, "children": "Apply for Jobs" } },
-          { "type": "Text", "props": { "variant": "muted", "children": "Open roles you can apply to" } }
+          { "type": "Text", "props": { "variant": "muted", "children": "Explore opportunities and take the next step in your career." } }
         ]
       },
       {
@@ -51,101 +59,125 @@
         "children": [
           {
             "type": "Stack",
-            "props": { "spacing": 2 },
+            "props": { "spacing": 4 },
             "children": [
               {
-                "type": "Stack",
-                "each": "{{data.openJobs}}",
-                "as": "job",
-                "key": "{{job.id}}",
+                "type": "Input",
                 "props": {
-                  "direction": "horizontal",
-                  "justify": "between",
-                  "align": "center",
-                  "className": "p-4 border rounded-lg"
-                },
+                  "placeholder": "Search by job title or location...",
+                  "value": "{{state.jobSearch}}",
+                  "onChange": { "action": "setState", "key": "jobSearch", "value": "{{event.target.value}}" }
+                }
+              },
+              {
+                "type": "Stack",
+                "props": { "spacing": 2 },
                 "children": [
                   {
                     "type": "Stack",
-                    "props": { "spacing": 1 },
+                    "each": "{{data.openJobs}}",
+                    "as": "job",
+                    "key": "{{job.id}}",
+                    "props": {
+                      "direction": "horizontal",
+                      "justify": "between",
+                      "align": "center",
+                      "className": "p-4 border rounded-lg"
+                    },
                     "children": [
-                      { "type": "Text", "props": { "weight": "medium", "children": "{{job.title}}" } },
                       {
-                        "type": "Text",
-                        "if": "{{job.location}}",
-                        "props": { "variant": "muted", "size": "sm", "children": "{{job.location}}" }
+                        "type": "Stack",
+                        "props": { "direction": "horizontal", "spacing": 3, "align": "center" },
+                        "children": [
+                          {
+                            "type": "Container",
+                            "props": { "className": "w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-xl shrink-0", "padding": 0, "center": false },
+                            "children": [{ "type": "Text", "props": { "children": "🎓" } }]
+                          },
+                          {
+                            "type": "Stack",
+                            "props": { "spacing": 1 },
+                            "children": [
+                              { "type": "Text", "props": { "weight": "medium", "children": "{{job.title}}" } },
+                              {
+                                "type": "Text",
+                                "if": "{{job.location}}",
+                                "props": { "variant": "muted", "size": "sm", "children": "📍 {{job.location}}" }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Stack",
+                        "props": { "direction": "horizontal", "spacing": 2, "align": "center" },
+                        "children": [
+                          {
+                            "type": "Badge",
+                            "if": "{{job.already_applied}}",
+                            "props": { "children": "Applied" }
+                          },
+                          {
+                            "type": "Button",
+                            "if": "{{job.already_applied}}",
+                            "props": {
+                              "variant": "outline",
+                              "size": "sm",
+                              "children": "View my resume",
+                              "onClick": {
+                                "action": "sequence",
+                                "actions": [
+                                  { "action": "setState", "key": "resumeLinkError", "value": null },
+                                  {
+                                    "action": "apiCall",
+                                    "operation": "invoke",
+                                    "function": "get-my-resume-url",
+                                    "data": { "job_id": "{{job.id}}" },
+                                    "onSuccess": {
+                                      "action": "sequence",
+                                      "actions": [
+                                        { "action": "setState", "key": "myResumeUrl", "value": "{{event.data.url}}" },
+                                        { "action": "openModal", "modalId": "viewResumeModal" }
+                                      ]
+                                    },
+                                    "onError": {
+                                      "action": "setState",
+                                      "key": "resumeLinkError",
+                                      "value": "Could not load your resume link."
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "type": "Button",
+                            "props": {
+                              "variant": "outline",
+                              "size": "sm",
+                              "children": "View details",
+                              "onClick": {
+                                "action": "sequence",
+                                "actions": [
+                                  { "action": "setState", "key": "viewJobId", "value": "{{job.id}}" },
+                                  { "action": "setState", "key": "viewJobTitle", "value": "{{job.title}}" },
+                                  { "action": "setState", "key": "viewJobLocation", "value": "{{job.location}}" },
+                                  { "action": "setState", "key": "viewJobDesc", "value": "{{job.jd_text}}" },
+                                  { "action": "openModal", "modalId": "viewJobModal" }
+                                ]
+                              }
+                            }
+                          }
+                        ]
                       }
                     ]
                   },
                   {
-                    "type": "Stack",
-                    "props": { "direction": "horizontal", "spacing": 2, "align": "center" },
-                    "children": [
-                      {
-                        "type": "Badge",
-                        "if": "{{job.already_applied}}",
-                        "props": { "children": "Applied" }
-                      },
-                      {
-                        "type": "Button",
-                        "if": "{{job.already_applied}}",
-                        "props": {
-                          "variant": "outline",
-                          "size": "sm",
-                          "children": "View my resume",
-                          "onClick": {
-                            "action": "sequence",
-                            "actions": [
-                              { "action": "setState", "key": "resumeLinkError", "value": null },
-                              {
-                                "action": "apiCall",
-                                "operation": "invoke",
-                                "function": "get-my-resume-url",
-                                "data": { "job_id": "{{job.id}}" },
-                                "onSuccess": {
-                                  "action": "sequence",
-                                  "actions": [
-                                    { "action": "setState", "key": "myResumeUrl", "value": "{{event.data.url}}" },
-                                    { "action": "openModal", "modalId": "viewResumeModal" }
-                                  ]
-                                },
-                                "onError": {
-                                  "action": "setState",
-                                  "key": "resumeLinkError",
-                                  "value": "Could not load your resume link."
-                                }
-                              }
-                            ]
-                          }
-                        }
-                      },
-                      {
-                        "type": "Button",
-                        "if": "{{!job.already_applied}}",
-                        "props": {
-                          "size": "sm",
-                          "children": "Apply",
-                          "onClick": {
-                            "action": "sequence",
-                            "actions": [
-                              { "action": "setState", "key": "resumeFileName", "value": "" },
-                              { "action": "setState", "key": "resumeStoragePath", "value": null },
-                              { "action": "setState", "key": "error", "value": null },
-                              { "action": "setState", "key": "applyJobId", "value": "{{job.id}}" },
-                              { "action": "setState", "key": "applyJobTitle", "value": "{{job.title}}" },
-                              { "action": "openModal", "modalId": "applyModal" }
-                            ]
-                          }
-                        }
-                      }
-                    ]
+                    "type": "Text",
+                    "if": "{{!data.openJobs || data.openJobs.length === 0}}",
+                    "props": { "variant": "muted", "className": "text-center py-8", "children": "No open jobs right now." }
                   }
                 ]
-              },
-              {
-                "type": "Text",
-                "if": "{{!data.openJobs || data.openJobs.length === 0}}",
-                "props": { "variant": "muted", "className": "text-center py-8", "children": "No open jobs right now." }
               }
             ]
           }
@@ -154,61 +186,20 @@
     ]
   },
   "modals": {
-    "applyModal": {
-      "title": "Apply for {{state.applyJobTitle}}",
-      "size": "md",
+    "viewJobModal": {
+      "title": "{{state.viewJobTitle}}",
+      "size": "lg",
       "content": {
         "type": "Stack",
         "props": { "spacing": 4 },
         "children": [
           {
-            "type": "FileInput",
-            "props": {
-              "label": "Resume file (PDF or DOCX)",
-              "accept": ".pdf,.docx",
-              "required": true,
-              "onChange": {
-                "action": "sequence",
-                "actions": [
-                  { "action": "setState", "key": "error", "value": null },
-                  { "action": "setState", "key": "resumeFileName", "value": "{{event.fileName}}" },
-                  { "action": "setState", "key": "resumeStoragePath", "value": null },
-                  { "action": "setState", "key": "uploading", "value": true },
-                  {
-                    "action": "apiCall",
-                    "operation": "upload",
-                    "bucket": "resumes",
-                    "path": "{{event.path}}",
-                    "data": "{{event.file}}",
-                    "onSuccess": {
-                      "action": "sequence",
-                      "actions": [
-                        { "action": "setState", "key": "uploading", "value": false },
-                        { "action": "setState", "key": "resumeStoragePath", "value": "{{event.path}}" }
-                      ]
-                    },
-                    "onError": {
-                      "action": "sequence",
-                      "actions": [
-                        { "action": "setState", "key": "uploading", "value": false },
-                        { "action": "setState", "key": "error", "value": "Resume upload failed. Please try again." }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          },
-          {
             "type": "Text",
-            "if": "{{state.resumeFileName}}",
-            "props": { "variant": "muted", "size": "sm", "children": "Selected: {{state.resumeFileName}}" }
+            "if": "{{state.viewJobLocation}}",
+            "props": { "variant": "muted", "children": "📍 {{state.viewJobLocation}}" }
           },
-          {
-            "type": "Text",
-            "if": "{{state.uploading}}",
-            "props": { "variant": "muted", "size": "sm", "children": "Uploading resume..." }
-          },
+          { "type": "Heading", "props": { "level": 3, "children": "About the role" } },
+          { "type": "Text", "props": { "className": "whitespace-pre-wrap", "children": "{{state.viewJobDesc}}" } },
           {
             "type": "Stack",
             "props": { "direction": "horizontal", "justify": "end", "spacing": 2 },
@@ -217,50 +208,252 @@
                 "type": "Button",
                 "props": {
                   "variant": "outline",
-                  "children": "Cancel",
-                  "onClick": { "action": "closeModal", "modalId": "applyModal" }
+                  "children": "Close",
+                  "onClick": { "action": "closeModal", "modalId": "viewJobModal" }
                 }
               },
               {
                 "type": "Button",
                 "props": {
-                  "children": "Submit Application",
-                  "loading": "{{state.submitting}}",
-                  "disabled": "{{!state.resumeStoragePath || state.uploading}}",
+                  "children": "Apply Now →",
                   "onClick": {
                     "action": "sequence",
                     "actions": [
+                      { "action": "closeModal", "modalId": "viewJobModal" },
+                      { "action": "setState", "key": "resumeFileName", "value": "" },
+                      { "action": "setState", "key": "resumeStoragePath", "value": null },
                       { "action": "setState", "key": "error", "value": null },
-                      { "action": "setState", "key": "submitting", "value": true },
+                      { "action": "setState", "key": "wizardStep", "value": 1 },
+                      { "action": "setState", "key": "wizardWhy", "value": "" },
+                      { "action": "setState", "key": "wizardSql", "value": "" },
+                      { "action": "setState", "key": "applyJobId", "value": "{{state.viewJobId}}" },
+                      { "action": "setState", "key": "applyJobTitle", "value": "{{state.viewJobTitle}}" },
+                      { "action": "openModal", "modalId": "applyModal" }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "applyModal": {
+      "title": "Apply for {{state.applyJobTitle}}",
+      "size": "md",
+      "content": {
+        "type": "Stack",
+        "props": { "spacing": 4 },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "spacing": 2 },
+            "children": [
+              { "type": "Badge", "props": { "variant": "{{state.wizardStep === 1 ? 'default' : 'outline'}}", "children": "1. Review" } },
+              { "type": "Badge", "props": { "variant": "{{state.wizardStep === 2 ? 'default' : 'outline'}}", "children": "2. Questions" } },
+              { "type": "Badge", "props": { "variant": "{{state.wizardStep === 3 ? 'default' : 'outline'}}", "children": "3. Submit" } }
+            ]
+          },
+          {
+            "type": "Stack",
+            "if": "{{state.wizardStep === 1}}",
+            "props": { "spacing": 3 },
+            "children": [
+              { "type": "Heading", "props": { "level": 3, "children": "Review your profile" } },
+              { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "We'll use the information in your candidate profile for this application." } },
+              {
+                "type": "Stack",
+                "props": { "spacing": 1, "className": "p-3 bg-muted rounded-lg" },
+                "children": [
+                  { "type": "Text", "props": { "size": "sm", "children": "✓ Personal information" } },
+                  { "type": "Text", "props": { "size": "sm", "children": "✓ Skills & experience" } },
+                  { "type": "Text", "props": { "size": "sm", "children": "✓ Resume ready to upload" } }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Stack",
+            "if": "{{state.wizardStep === 2}}",
+            "props": { "spacing": 3 },
+            "children": [
+              { "type": "Heading", "props": { "level": 3, "children": "Application questions" } },
+              {
+                "type": "Textarea",
+                "props": {
+                  "label": "Why are you interested in this position?",
+                  "value": "{{state.wizardWhy}}",
+                  "onChange": { "action": "setState", "key": "wizardWhy", "value": "{{event.target.value}}" }
+                }
+              },
+              {
+                "type": "Stack",
+                "props": { "spacing": 2 },
+                "children": [
+                  { "type": "Text", "props": { "weight": "medium", "children": "Do you have experience with SQL?" } },
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 4 },
+                    "children": [
+                      {
+                        "type": "Radio",
+                        "props": {
+                          "name": "wizardSql",
+                          "value": "yes",
+                          "label": "Yes",
+                          "checked": "{{state.wizardSql === 'yes'}}",
+                          "onChange": { "action": "setState", "key": "wizardSql", "value": "yes" }
+                        }
+                      },
+                      {
+                        "type": "Radio",
+                        "props": {
+                          "name": "wizardSql",
+                          "value": "no",
+                          "label": "No",
+                          "checked": "{{state.wizardSql === 'no'}}",
+                          "onChange": { "action": "setState", "key": "wizardSql", "value": "no" }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Stack",
+            "if": "{{state.wizardStep === 3}}",
+            "props": { "spacing": 4 },
+            "children": [
+              { "type": "Heading", "props": { "level": 3, "children": "Review & submit" } },
+              {
+                "type": "FileInput",
+                "props": {
+                  "label": "Resume file (PDF or DOCX)",
+                  "accept": ".pdf,.docx",
+                  "required": true,
+                  "onChange": {
+                    "action": "sequence",
+                    "actions": [
+                      { "action": "setState", "key": "error", "value": null },
+                      { "action": "setState", "key": "resumeFileName", "value": "{{event.fileName}}" },
+                      { "action": "setState", "key": "resumeStoragePath", "value": null },
+                      { "action": "setState", "key": "uploading", "value": true },
                       {
                         "action": "apiCall",
-                        "operation": "invoke",
-                        "function": "start-scoring-workflow",
-                        "data": {
-                          "resume_storage_path": "{{state.resumeStoragePath}}",
-                          "job_description_entity_id": "{{state.applyJobId}}",
-                          "applicant_id": "{{params.candidateId}}"
-                        },
+                        "operation": "upload",
+                        "bucket": "resumes",
+                        "path": "{{event.path}}",
+                        "data": "{{event.file}}",
                         "onSuccess": {
                           "action": "sequence",
                           "actions": [
-                            { "action": "setState", "key": "submitting", "value": false },
-                            { "action": "setState", "key": "confirmationJobTitle", "value": "{{state.applyJobTitle}}" },
-                            { "action": "closeModal", "modalId": "applyModal" },
-                            { "action": "refetch", "source": "openJobs" }
+                            { "action": "setState", "key": "uploading", "value": false },
+                            { "action": "setState", "key": "resumeStoragePath", "value": "{{event.path}}" }
                           ]
                         },
                         "onError": {
                           "action": "sequence",
                           "actions": [
-                            { "action": "setState", "key": "submitting", "value": false },
-                            { "action": "setState", "key": "error", "value": "Failed to submit application. Please try again." }
+                            { "action": "setState", "key": "uploading", "value": false },
+                            { "action": "setState", "key": "error", "value": "Resume upload failed. Please try again." }
                           ]
                         }
                       }
                     ]
                   }
                 }
+              },
+              {
+                "type": "Text",
+                "if": "{{state.resumeFileName}}",
+                "props": { "variant": "muted", "size": "sm", "children": "Selected: {{state.resumeFileName}}" }
+              },
+              {
+                "type": "Text",
+                "if": "{{state.uploading}}",
+                "props": { "variant": "muted", "size": "sm", "children": "Uploading resume..." }
+              }
+            ]
+          },
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "justify": "between", "align": "center" },
+            "children": [
+              {
+                "type": "Button",
+                "if": "{{state.wizardStep > 1}}",
+                "props": {
+                  "variant": "outline",
+                  "children": "Back",
+                  "onClick": { "action": "setState", "key": "wizardStep", "value": "{{state.wizardStep === 2 ? 1 : 2}}" }
+                }
+              },
+              { "type": "Stack", "if": "{{state.wizardStep === 1}}" },
+              {
+                "type": "Stack",
+                "props": { "direction": "horizontal", "justify": "end", "spacing": 2 },
+                "children": [
+                  {
+                    "type": "Button",
+                    "props": {
+                      "variant": "outline",
+                      "children": "Cancel",
+                      "onClick": { "action": "closeModal", "modalId": "applyModal" }
+                    }
+                  },
+                  {
+                    "type": "Button",
+                    "if": "{{state.wizardStep < 3}}",
+                    "props": {
+                      "children": "Continue →",
+                      "onClick": { "action": "setState", "key": "wizardStep", "value": "{{state.wizardStep === 1 ? 2 : 3}}" }
+                    }
+                  },
+                  {
+                    "type": "Button",
+                    "if": "{{state.wizardStep === 3}}",
+                    "props": {
+                      "children": "Submit Application",
+                      "loading": "{{state.submitting}}",
+                      "disabled": "{{!state.resumeStoragePath || state.uploading}}",
+                      "onClick": {
+                        "action": "sequence",
+                        "actions": [
+                          { "action": "setState", "key": "error", "value": null },
+                          { "action": "setState", "key": "submitting", "value": true },
+                          {
+                            "action": "apiCall",
+                            "operation": "invoke",
+                            "function": "start-scoring-workflow",
+                            "data": {
+                              "resume_storage_path": "{{state.resumeStoragePath}}",
+                              "job_description_entity_id": "{{state.applyJobId}}",
+                              "applicant_id": "{{params.candidateId}}"
+                            },
+                            "onSuccess": {
+                              "action": "sequence",
+                              "actions": [
+                                { "action": "setState", "key": "submitting", "value": false },
+                                { "action": "setState", "key": "confirmationJobTitle", "value": "{{state.applyJobTitle}}" },
+                                { "action": "closeModal", "modalId": "applyModal" },
+                                { "action": "refetch", "source": "openJobs" }
+                              ]
+                            },
+                            "onError": {
+                              "action": "sequence",
+                              "actions": [
+                                { "action": "setState", "key": "submitting", "value": false },
+                                { "action": "setState", "key": "error", "value": "Failed to submit application. Please try again." }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
               }
             ]
           }

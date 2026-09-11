@@ -1,0 +1,83 @@
+{
+  "id": "candidate-messages",
+  "title": "Messages",
+  "state": { "draft": "", "sent": false },
+  "dataSources": {
+    "threads": {
+      "type": "static",
+      "data": [
+        { "id": 1, "from": "Adapt IT Recruitment", "preview": "Congratulations! You have been selected for the next stage...", "when": "10:32" },
+        { "id": 2, "from": "Talent Team", "preview": "Please confirm your availability for an interview.", "when": "Yesterday" }
+      ]
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "spacing": 1 },
+        "children": [
+          { "type": "Heading", "props": { "level": 1, "children": "Messages" } },
+          { "type": "Text", "props": { "variant": "muted", "children": "Communicate with recruiters and hiring teams." } }
+        ]
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 4 },
+            "children": [
+              {
+                "type": "Stack",
+                "each": "{{data.threads}}",
+                "as": "thread",
+                "key": "{{thread.id}}",
+                "props": { "direction": "horizontal", "justify": "between", "align": "center", "className": "py-2 border-b" },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "spacing": 0 },
+                    "children": [
+                      { "type": "Text", "props": { "weight": "medium", "children": "{{thread.from}}" } },
+                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "{{thread.preview}}" } }
+                    ]
+                  },
+                  { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "{{thread.when}}" } }
+                ]
+              },
+              {
+                "type": "Alert",
+                "if": "{{state.sent}}",
+                "props": { "title": "Message sent" }
+              },
+              {
+                "type": "Textarea",
+                "props": {
+                  "label": "Write a new message...",
+                  "value": "{{state.draft}}",
+                  "onChange": { "action": "setState", "key": "draft", "value": "{{event.target.value}}" }
+                }
+              },
+              {
+                "type": "Button",
+                "props": {
+                  "children": "Send Message",
+                  "onClick": {
+                    "action": "sequence",
+                    "actions": [
+                      { "action": "setState", "key": "sent", "value": true },
+                      { "action": "setState", "key": "draft", "value": "" }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

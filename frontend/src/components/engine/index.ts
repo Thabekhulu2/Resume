@@ -18,6 +18,7 @@ export { Heading } from './typography/Heading';
 export { EngineInput as Input } from './forms/EngineInput';
 export { EngineSelect as Select } from './forms/EngineSelect';
 export { EngineCheckbox as Checkbox } from './forms/EngineCheckbox';
+export { EngineRadio as Radio } from './forms/EngineRadio';
 export { EngineTextarea as Textarea } from './forms/EngineTextarea';
 export { EngineFileInput as FileInput } from './forms/EngineFileInput';
 

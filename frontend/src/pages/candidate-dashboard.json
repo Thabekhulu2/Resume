@@ -1,0 +1,149 @@
+{
+  "id": "candidate-dashboard",
+  "title": "Dashboard",
+  "state": {},
+  "dataSources": {
+    "stats": {
+      "type": "static",
+      "data": [
+        { "label": "Jobs Applied", "value": 8 },
+        { "label": "Active Applications", "value": 5 },
+        { "label": "Interviews", "value": 2 },
+        { "label": "Shortlisted", "value": 1 }
+      ]
+    },
+    "recommended": {
+      "type": "static",
+      "data": [
+        { "title": "Graduate Developer", "location": "Midrand, South Africa", "match": 91 },
+        { "title": "Graduate Internships", "location": "Midrand, South Africa", "match": 87 },
+        { "title": "Young Professional In Training", "location": "Johannesburg, South Africa", "match": 84 }
+      ]
+    },
+    "recentActivity": {
+      "type": "static",
+      "data": [
+        { "title": "Graduate Developer", "note": "Application updated", "when": "2 days ago" },
+        { "title": "Junior Software Developer", "note": "Interview scheduled", "when": "1 week ago" },
+        { "title": "Application Developer", "note": "Shortlisted", "when": "2 weeks ago" }
+      ]
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Card",
+        "props": { "className": "bg-gradient-to-r from-primary/5 to-transparent" },
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "justify": "between", "align": "center" },
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "spacing": 1 },
+                "children": [
+                  { "type": "Heading", "props": { "level": 1, "children": "Good morning 👋" } },
+                  {
+                    "type": "Text",
+                    "props": { "variant": "muted", "children": "Here's an overview of your job search and applications." }
+                  }
+                ]
+              },
+              { "type": "Text", "props": { "className": "text-5xl", "children": "🚀" } }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Grid",
+        "props": { "columns": 4, "gap": 4 },
+        "children": [
+          {
+            "type": "Card",
+            "each": "{{data.stats}}",
+            "as": "stat",
+            "key": "{{stat.label}}",
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "spacing": 1 },
+                "children": [
+                  { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "{{stat.label}}" } },
+                  { "type": "Text", "props": { "className": "text-3xl font-bold", "children": "{{stat.value}}" } }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Grid",
+        "props": { "columns": 2, "gap": 4 },
+        "children": [
+          {
+            "type": "Card",
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "spacing": 3 },
+                "children": [
+                  { "type": "Heading", "props": { "level": 2, "children": "Recommended for you" } },
+                  {
+                    "type": "Stack",
+                    "each": "{{data.recommended}}",
+                    "as": "job",
+                    "key": "{{job.title}}",
+                    "props": { "direction": "horizontal", "justify": "between", "align": "center", "className": "py-2 border-b last:border-0" },
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "props": { "spacing": 0 },
+                        "children": [
+                          { "type": "Text", "props": { "weight": "medium", "children": "{{job.title}}" } },
+                          { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "{{job.location}}" } }
+                        ]
+                      },
+                      { "type": "Badge", "props": { "children": "{{job.match}}% Match" } }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Card",
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "spacing": 3 },
+                "children": [
+                  { "type": "Heading", "props": { "level": 2, "children": "Recent activity" } },
+                  {
+                    "type": "Stack",
+                    "each": "{{data.recentActivity}}",
+                    "as": "activity",
+                    "key": "{{activity.title}}",
+                    "props": { "direction": "horizontal", "justify": "between", "align": "center", "className": "py-2 border-b last:border-0" },
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "props": { "spacing": 0 },
+                        "children": [
+                          { "type": "Text", "props": { "weight": "medium", "children": "{{activity.title}}" } },
+                          { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "{{activity.note}} • {{activity.when}}" } }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

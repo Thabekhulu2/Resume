@@ -1,0 +1,111 @@
+{
+  "id": "candidate-applications",
+  "title": "My Applications",
+  "state": {},
+  "dataSources": {
+    "applications": {
+      "type": "supabase",
+      "table": "recruiter_job_applications",
+      "select": "*",
+      "order": [{ "column": "applied_at", "ascending": false }]
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "spacing": 1 },
+        "children": [
+          { "type": "Heading", "props": { "level": 1, "children": "My Applications" } },
+          { "type": "Text", "props": { "variant": "muted", "children": "Track every application and see what happens next." } }
+        ]
+      },
+      {
+        "type": "Text",
+        "if": "{{!data.applications || data.applications.length === 0}}",
+        "props": { "variant": "muted", "children": "You haven't applied to any jobs yet." }
+      },
+      {
+        "type": "Stack",
+        "props": { "spacing": 3 },
+        "children": [
+          {
+            "type": "Card",
+            "each": "{{data.applications}}",
+            "as": "application",
+            "key": "{{application.candidate_id}}",
+            "children": [
+              {
+                "type": "Stack",
+                "props": { "spacing": 3 },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "justify": "between", "align": "center" },
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "props": { "spacing": 1 },
+                        "children": [
+                          { "type": "Text", "props": { "weight": "medium", "children": "{{application.job_title || 'Untitled role'}}" } },
+                          { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "Applied {{application.applied_at}}" } }
+                        ]
+                      },
+                      {
+                        "type": "Stack",
+                        "props": { "direction": "horizontal", "spacing": 2, "align": "center" },
+                        "children": [
+                          {
+                            "type": "Badge",
+                            "if": "{{application.status === 'scored'}}",
+                            "props": { "children": "Scored" }
+                          },
+                          {
+                            "type": "Badge",
+                            "if": "{{application.status === 'scoring'}}",
+                            "props": { "variant": "secondary", "children": "Under Review" }
+                          },
+                          {
+                            "type": "Badge",
+                            "if": "{{application.status === 'failed'}}",
+                            "props": { "variant": "destructive", "children": "Needs attention" }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Stack",
+                    "props": { "direction": "horizontal", "spacing": 2 },
+                    "children": [
+                      {
+                        "type": "Badge",
+                        "props": { "variant": "outline", "children": "Submitted" }
+                      },
+                      {
+                        "type": "Badge",
+                        "props": {
+                          "variant": "{{application.status === 'scoring' ? 'default' : application.status === 'scored' ? 'default' : application.status === 'failed' ? 'default' : 'outline'}}",
+                          "children": "Reviewed"
+                        }
+                      },
+                      {
+                        "type": "Badge",
+                        "props": {
+                          "variant": "{{application.status === 'scored' ? 'default' : application.status === 'failed' ? 'default' : 'outline'}}",
+                          "children": "Decision"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

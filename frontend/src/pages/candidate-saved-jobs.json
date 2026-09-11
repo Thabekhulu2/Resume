@@ -1,0 +1,80 @@
+{
+  "id": "candidate-saved-jobs",
+  "title": "Saved Jobs",
+  "state": {},
+  "dataSources": {
+    "saved": {
+      "type": "static",
+      "data": [
+        {
+          "id": 1,
+          "title": "Graduate Internships",
+          "location": "Midrand, South Africa",
+          "desc": "Gain valuable work experience and grow your technical skills in a supportive and dynamic environment."
+        },
+        {
+          "id": 2,
+          "title": "Young Professional In Training",
+          "location": "Johannesburg, South Africa",
+          "desc": "Build your future with structured training, mentorship and exposure to real business projects."
+        }
+      ]
+    }
+  },
+  "layout": {
+    "type": "Stack",
+    "props": { "spacing": 6 },
+    "children": [
+      {
+        "type": "Stack",
+        "props": { "spacing": 1 },
+        "children": [
+          { "type": "Heading", "props": { "level": 1, "children": "Saved Jobs" } },
+          { "type": "Text", "props": { "variant": "muted", "children": "Keep interesting opportunities here until you're ready to apply." } }
+        ]
+      },
+      {
+        "type": "Card",
+        "children": [
+          {
+            "type": "Stack",
+            "props": { "spacing": 2 },
+            "children": [
+              {
+                "type": "Stack",
+                "each": "{{data.saved}}",
+                "as": "job",
+                "key": "{{job.id}}",
+                "props": { "direction": "horizontal", "justify": "between", "align": "center", "className": "p-4 border rounded-lg" },
+                "children": [
+                  {
+                    "type": "Stack",
+                    "props": { "spacing": 1 },
+                    "children": [
+                      { "type": "Text", "props": { "weight": "medium", "children": "{{job.title}}" } },
+                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "{{job.location}}" } },
+                      { "type": "Text", "props": { "variant": "muted", "size": "sm", "children": "{{job.desc}}" } }
+                    ]
+                  },
+                  {
+                    "type": "Button",
+                    "props": {
+                      "size": "sm",
+                      "children": "View Job",
+                      "onClick": { "action": "navigate", "to": "/apply" }
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Text",
+                "if": "{{!data.saved || data.saved.length === 0}}",
+                "props": { "variant": "muted", "className": "text-center py-8", "children": "No saved jobs yet." }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

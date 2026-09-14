@@ -1,0 +1,27 @@
+<p><a routerLink="/dashboard">&larr; Back to Dashboard</a></p>
+<h1>Candidates scored {{ min }}&ndash;{{ max }}</h1>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (candidates().length === 0) {
+  <p class="empty-state">No candidates in this range.</p>
+} @else {
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Job</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (candidate of candidates(); track candidate.id) {
+        <tr>
+          <td><a [routerLink]="['/candidates', candidate.id]">{{ candidate.name || '(unnamed)' }}</a></td>
+          <td>{{ candidate.jobTitle ?? '—' }}</td>
+          <td>{{ candidate.score ?? '—' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

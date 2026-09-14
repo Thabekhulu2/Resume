@@ -1,0 +1,7 @@
+<h1>Profile</h1>
+
+<div class="card">
+  <p><strong>Name:</strong> {{ auth.currentUser()?.fullName }}</p>
+  <p><strong>Email:</strong> {{ auth.currentUser()?.email }}</p>
+  <p class="empty-state">Profile editing is not available yet.</p>
+</div>

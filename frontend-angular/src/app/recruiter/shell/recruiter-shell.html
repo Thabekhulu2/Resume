@@ -1,0 +1,16 @@
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-header">Candidate Scoring</div>
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/jobs" routerLinkActive="active">Jobs</a>
+    <a routerLink="/candidates" routerLinkActive="active">Candidate History</a>
+    <a routerLink="/interviews" routerLinkActive="active">Scheduled Interviews</a>
+    <div class="sidebar-footer">
+      <span>{{ auth.currentUser()?.fullName }}</span>
+      <button type="button" class="link" (click)="logout()">Sign out</button>
+    </div>
+  </nav>
+  <div class="content">
+    <router-outlet />
+  </div>
+</div>

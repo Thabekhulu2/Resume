@@ -1,0 +1,81 @@
+<p><a routerLink="/candidates">&larr; Back to Candidate History</a></p>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (candidate(); as c) {
+  <h1>{{ c.name || '(unnamed)' }}</h1>
+  <p>Applied for <strong>{{ c.jobTitle ?? 'an unlinked job' }}</strong></p>
+
+  <div class="field-row">
+    <span class="badge" [class.accent]="c.status === 'scored'" [class.destructive]="c.status === 'failed'">
+      {{ c.status }}
+    </span>
+    @if (c.latestDecision) {
+      <span class="badge accent">{{ c.latestDecision }}</span>
+    }
+  </div>
+
+  @if (c.status === 'failed' && c.error) {
+    <p class="error">Scoring failed: {{ c.error }}</p>
+  }
+
+  @if (c.score !== null) {
+    <div class="card">
+      <h2>Fit score: {{ c.score }}</h2>
+      @if (c.reasoning) {
+        <p>{{ c.reasoning }}</p>
+      }
+    </div>
+  }
+
+  @if (c.skills.length > 0) {
+    <div class="card">
+      <h3>Skills</h3>
+      <div class="field-row">
+        @for (skill of c.skills; track skill) {
+          <span class="badge">{{ skill }}</span>
+        }
+      </div>
+    </div>
+  }
+
+  @if (c.experience.length > 0) {
+    <div class="card">
+      <h3>Experience</h3>
+      @for (entry of c.experience; track $index) {
+        <div class="experience-entry">
+          <strong>{{ entry.title }}</strong> &middot; {{ entry.company }} &middot; {{ entry.duration }}
+          <p>{{ entry.summary }}</p>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="field-row action-row">
+    <button type="button" class="primary" (click)="shortlist()" [disabled]="actionInProgress()">Shortlist</button>
+    <button type="button" class="secondary" (click)="showInterviewModal.set(true)" [disabled]="actionInProgress()">
+      Schedule Interview
+    </button>
+    <button type="button" class="destructive" (click)="reject()" [disabled]="actionInProgress()">Reject</button>
+  </div>
+
+  @if (showInterviewModal()) {
+    <div class="modal-backdrop" (click)="showInterviewModal.set(false)">
+      <form class="card modal" (click)="$event.stopPropagation()" (ngSubmit)="scheduleInterview()">
+        <h3>Schedule Interview</h3>
+        <label>
+          Date &amp; time
+          <input type="datetime-local" name="scheduledAt" [(ngModel)]="scheduledAt" required />
+        </label>
+        <label>
+          Notes
+          <textarea name="notes" rows="3" [(ngModel)]="notes"></textarea>
+        </label>
+        <div class="field-row">
+          <button type="button" class="secondary" (click)="showInterviewModal.set(false)">Cancel</button>
+          <button type="submit" class="primary" [disabled]="actionInProgress()">Confirm</button>
+        </div>
+      </form>
+    </div>
+  }
+}

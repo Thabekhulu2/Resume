@@ -1,0 +1,23 @@
+<h1>Dashboard</h1>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (bands()) {
+  <div class="field-row">
+    <a class="card band-card" routerLink="/candidates/range/70/100">
+      <h2>Strong fit</h2>
+      <p class="band-count">{{ bands()!.strong }}</p>
+      <p>Score 70&ndash;100</p>
+    </a>
+    <a class="card band-card" routerLink="/candidates/range/50/69">
+      <h2>Potential fit</h2>
+      <p class="band-count">{{ bands()!.potential }}</p>
+      <p>Score 50&ndash;69</p>
+    </a>
+    <a class="card band-card" routerLink="/candidates/range/0/49">
+      <h2>Weak fit</h2>
+      <p class="band-count">{{ bands()!.weak }}</p>
+      <p>Score 0&ndash;49</p>
+    </a>
+  </div>
+}

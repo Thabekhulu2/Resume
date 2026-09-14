@@ -1,0 +1,46 @@
+<h1>Browse Jobs</h1>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (jobs().length === 0) {
+  <p class="empty-state">No open jobs right now.</p>
+} @else {
+  @for (job of jobs(); track job.id) {
+    <div class="card job-card">
+      <h2>{{ job.title }}</h2>
+      <p>{{ job.location }}</p>
+      <p>{{ job.jdText }}</p>
+      @if (job.alreadyApplied) {
+        <div class="field-row">
+          <span class="badge accent">Applied</span>
+          <button type="button" class="secondary" (click)="viewMyResume(job)" [disabled]="viewingResumeForJob() === job.id">
+            {{ viewingResumeForJob() === job.id ? 'Opening…' : 'View my resume' }}
+          </button>
+        </div>
+      } @else {
+        <button type="button" class="primary" (click)="openApply(job)">Apply Now</button>
+      }
+    </div>
+  }
+}
+
+@if (applyingJob(); as job) {
+  <div class="modal-backdrop" (click)="closeApply()">
+    <div class="card modal" (click)="$event.stopPropagation()">
+      <h3>Apply for {{ job.title }}</h3>
+      <label>
+        Resume (PDF or DOCX)
+        <input type="file" accept=".pdf,.docx" (change)="onFileSelected($event)" />
+      </label>
+      @if (applyError()) {
+        <p class="error">{{ applyError() }}</p>
+      }
+      <div class="field-row">
+        <button type="button" class="secondary" (click)="closeApply()">Cancel</button>
+        <button type="button" class="primary" (click)="submitApplication()" [disabled]="applying() || !selectedFile">
+          {{ applying() ? 'Submitting…' : 'Submit Application' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

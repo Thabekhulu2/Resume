@@ -1,1 +1,375 @@
-/* You can add global styles to this file, and also import other style files */
+/* Adapt IT Design System tokens, carried over from frontend/src/styles/globals.css
+   (Brand Guide V2024.2 / colors_and_type.css) for the Spring Boot + Angular
+   migration (ticket #29, Phase 6). */
+
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-Light.otf") format("opentype");
+}
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-Regular.otf") format("opentype");
+}
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-It.otf") format("opentype");
+}
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-Bold.otf") format("opentype");
+}
+@font-face {
+  font-family: "Myriad Pro";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/MyriadPro-Black.otf") format("opentype");
+}
+
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #4c5056;
+  --color-card: #ffffff;
+  --color-primary: #00a1ed;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f4f5f5;
+  --color-secondary-foreground: #003242;
+  --color-muted: #f4f5f5;
+  --color-muted-foreground: #a2a5aa;
+  --color-accent: #e6f6fd;
+  --color-accent-foreground: #003242;
+  --color-destructive: #e82727;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #ececed;
+  --color-input: #c9cacd;
+  --color-ring: rgba(0, 161, 237, 0.3);
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-xl: 14px;
+  --font-sans: "Myriad Pro", Calibri, "Open Sans", "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #003242;
+  margin: 0 0 0.5em 0;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+/* Shared component classes, reused across pages instead of duplicating
+   per-component CSS -- kept global since Angular's emulated encapsulation
+   would otherwise force copy-pasting these into every feature component. */
+
+button.primary {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+button.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+button.secondary {
+  background: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+button.destructive {
+  background: var(--color-destructive);
+  color: var(--color-destructive-foreground);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+button.link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table.data-table th {
+  text-align: left;
+  color: var(--color-muted-foreground);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.6rem 0.75rem;
+}
+table.data-table td {
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.6rem 0.75rem;
+  vertical-align: top;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+}
+.badge.accent {
+  background: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+.badge.destructive {
+  background: var(--color-destructive);
+  color: var(--color-destructive-foreground);
+}
+
+.error {
+  color: var(--color-destructive);
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  color: var(--color-muted-foreground);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+.shell .sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--color-secondary);
+  border-right: 1px solid var(--color-border);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.shell .sidebar a {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-secondary-foreground);
+  text-decoration: none;
+  font-weight: 500;
+}
+.shell .sidebar a.active,
+.shell .sidebar a:hover {
+  background: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+.shell .content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1100px;
+}
+.shell .sidebar-header {
+  font-weight: 700;
+  color: #003242;
+  margin-bottom: 1.5rem;
+  padding: 0 0.75rem;
+}
+.shell .sidebar-footer {
+  margin-top: auto;
+}
+
+.field-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.field-row > * {
+  flex: 1;
+  min-width: 200px;
+}
+
+form label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+form input,
+form select,
+form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-input);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+}
+form input:focus,
+form select:focus,
+form textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-ring);
+}
+
+/* Auth pages (login + signup share this layout) */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-secondary);
+}
+.login-card {
+  background: var(--color-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 380px;
+}
+.role-toggle {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.role-toggle button {
+  flex: 1;
+  border: none;
+  background: var(--color-secondary);
+  padding: 0.6rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+}
+.role-toggle button.active {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+.login-card button.primary {
+  width: 100%;
+}
+.signup-link {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.band-card {
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.band-card:hover {
+  border-color: var(--color-primary);
+}
+.band-count {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0.25rem 0;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.status-toggle {
+  max-width: 320px;
+  margin-bottom: 1.5rem;
+}
+
+.card + .card {
+  margin-top: 1rem;
+}
+.job-card + .job-card {
+  margin-top: 1rem;
+}
+.notification-card + .notification-card {
+  margin-top: 1rem;
+}
+.notification-card.unread {
+  border-left: 3px solid var(--color-primary);
+}
+.notification-date {
+  color: var(--color-muted-foreground);
+  font-size: 0.85rem;
+}
+.experience-entry + .experience-entry {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+.action-row {
+  margin-top: 1.5rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.modal-backdrop .modal {
+  width: 100%;
+  max-width: 420px;
+  border-radius: var(--radius-xl);
+}

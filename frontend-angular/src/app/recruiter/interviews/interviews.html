@@ -1,0 +1,30 @@
+<h1>Scheduled Interviews</h1>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (interviews().length === 0) {
+  <p class="empty-state">No interviews scheduled.</p>
+} @else {
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Candidate</th>
+        <th>Job</th>
+        <th>Date &amp; time</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (interview of interviews(); track interview.id) {
+        <tr>
+          <td><a [routerLink]="['/candidates', interview.candidateId]">{{ interview.candidateName || '(unnamed)' }}</a></td>
+          <td>{{ interview.jobTitle ?? '—' }}</td>
+          <td>{{ interview.scheduledAt | date: 'medium' }}</td>
+          <td><span class="badge">{{ interview.status }}</span></td>
+          <td>{{ interview.notes ?? '—' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

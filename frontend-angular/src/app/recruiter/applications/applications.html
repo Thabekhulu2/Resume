@@ -1,0 +1,35 @@
+<p><a routerLink="/jobs">&larr; Back to Jobs</a></p>
+<h1>Applications: {{ jobTitle() }}</h1>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (applications().length === 0) {
+  <p class="empty-state">No applications yet.</p>
+} @else {
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Candidate</th>
+        <th>Status</th>
+        <th>Score</th>
+        <th>Applied</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of applications(); track row.candidateId) {
+        <tr>
+          <td><a [routerLink]="['/candidates', row.candidateId]">{{ row.candidateName || '(unnamed)' }}</a></td>
+          <td><span class="badge">{{ row.status }}</span></td>
+          <td>{{ row.score ?? '—' }}</td>
+          <td>{{ row.appliedAt | date: 'medium' }}</td>
+          <td>
+            <button type="button" class="link" (click)="rescore(row)" [disabled]="rescoring() === row.candidateId">
+              {{ rescoring() === row.candidateId ? 'Scoring…' : 'Score' }}
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

@@ -39,3 +39,8 @@ security:
   jwt:
     secret: ${JWT_SECRET:dev-only-change-me-dev-only-change-me}
     expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
+
+cors:
+  # 54200 is the docker-compose-published Angular port; 4200 is ng serve's
+  # own default when run directly on the host outside Docker.
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:54200,http://localhost:4200}

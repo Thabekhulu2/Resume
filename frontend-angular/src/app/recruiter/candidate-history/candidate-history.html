@@ -1,0 +1,37 @@
+<div class="page-header">
+  <h1>Candidate History</h1>
+  @if (selected().size > 0) {
+    <button type="button" class="destructive" (click)="deleteSelected()">Delete selected ({{ selected().size }})</button>
+  }
+</div>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (candidates().length === 0) {
+  <p class="empty-state">No candidates scored yet.</p>
+} @else {
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Job</th>
+        <th>Status</th>
+        <th>Score</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (candidate of candidates(); track candidate.id) {
+        <tr>
+          <td><input type="checkbox" [checked]="selected().has(candidate.id)" (change)="toggleSelected(candidate.id)" /></td>
+          <td><a [routerLink]="['/candidates', candidate.id]">{{ candidate.name || '(unnamed)' }}</a></td>
+          <td>{{ candidate.jobTitle ?? '—' }}</td>
+          <td><span class="badge">{{ candidate.status }}</span></td>
+          <td>{{ candidate.score ?? '—' }}</td>
+          <td><button type="button" class="link" (click)="deleteOne(candidate.id)">Delete</button></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

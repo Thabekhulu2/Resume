@@ -1,0 +1,21 @@
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-header">Candidate Portal</div>
+    <a routerLink="/candidate/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/candidate/jobs" routerLinkActive="active">Browse Jobs</a>
+    <a routerLink="/candidate/applications" routerLinkActive="active">My Applications</a>
+    <a routerLink="/candidate/saved-jobs" routerLinkActive="active">Saved Jobs</a>
+    <a routerLink="/candidate/job-alerts" routerLinkActive="active">Job Alerts</a>
+    <a routerLink="/candidate/messages" routerLinkActive="active">Messages</a>
+    <a routerLink="/candidate/notifications" routerLinkActive="active">Notifications</a>
+    <a routerLink="/candidate/profile" routerLinkActive="active">Profile</a>
+    <a routerLink="/candidate/settings" routerLinkActive="active">Settings</a>
+    <div class="sidebar-footer">
+      <span>{{ auth.currentUser()?.fullName }}</span>
+      <button type="button" class="link" (click)="logout()">Sign out</button>
+    </div>
+  </nav>
+  <div class="content">
+    <router-outlet />
+  </div>
+</div>

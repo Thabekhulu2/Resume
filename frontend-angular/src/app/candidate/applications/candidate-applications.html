@@ -1,0 +1,26 @@
+<h1>My Applications</h1>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (applications().length === 0) {
+  <p class="empty-state">You haven't applied to any jobs yet.</p>
+} @else {
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Job</th>
+        <th>Status</th>
+        <th>Applied</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of applications(); track row.candidateId) {
+        <tr>
+          <td>{{ row.jobTitle ?? '—' }}</td>
+          <td><span class="badge">{{ row.status }}</span></td>
+          <td>{{ row.appliedAt | date: 'medium' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

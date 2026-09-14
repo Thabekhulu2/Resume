@@ -1,0 +1,63 @@
+<div class="page-header">
+  <h1>Jobs</h1>
+  <button type="button" class="primary" (click)="showCreateForm.set(!showCreateForm())">
+    {{ showCreateForm() ? 'Cancel' : 'New Job' }}
+  </button>
+</div>
+
+@if (showCreateForm()) {
+  <form class="card" (ngSubmit)="createJob()">
+    <label>
+      Title
+      <input type="text" name="title" [(ngModel)]="title" required />
+    </label>
+    <label>
+      Location
+      <input type="text" name="location" [(ngModel)]="location" />
+    </label>
+    <label>
+      Job description
+      <textarea name="jdText" rows="5" [(ngModel)]="jdText" required></textarea>
+    </label>
+    <button type="submit" class="primary" [disabled]="creating()">
+      {{ creating() ? 'Creating…' : 'Create job' }}
+    </button>
+  </form>
+}
+
+<div class="role-toggle status-toggle">
+  <button type="button" [class.active]="statusFilter() === 'open'" (click)="setFilter('open')">Open</button>
+  <button type="button" [class.active]="statusFilter() === 'closed'" (click)="setFilter('closed')">Closed</button>
+  <button type="button" [class.active]="statusFilter() === 'all'" (click)="setFilter('all')">All</button>
+</div>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (jobs().length === 0) {
+  <p class="empty-state">No jobs found.</p>
+} @else {
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (job of jobs(); track job.id) {
+        <tr>
+          <td><a [routerLink]="['/jobs', job.id, 'applications']">{{ job.title }}</a></td>
+          <td>{{ job.location }}</td>
+          <td><span class="badge" [class.accent]="job.status === 'open'">{{ job.status }}</span></td>
+          <td>
+            <button type="button" class="link" (click)="toggleStatus(job)">
+              {{ job.status === 'open' ? 'Close' : 'Reopen' }}
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

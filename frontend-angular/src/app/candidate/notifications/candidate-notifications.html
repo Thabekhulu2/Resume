@@ -1,0 +1,20 @@
+<h1>Notifications</h1>
+
+@if (loading()) {
+  <p>Loading…</p>
+} @else if (notifications().length === 0) {
+  <p class="empty-state">No notifications yet.</p>
+} @else {
+  @for (notification of notifications(); track notification.id) {
+    <div class="card notification-card" [class.unread]="!notification.read">
+      <div class="page-header">
+        <h3>{{ notification.title }}</h3>
+        @if (!notification.read) {
+          <button type="button" class="link" (click)="markRead(notification)">Mark read</button>
+        }
+      </div>
+      <p>{{ notification.body }}</p>
+      <p class="notification-date">{{ notification.createdAt | date: 'medium' }}</p>
+    </div>
+  }
+}

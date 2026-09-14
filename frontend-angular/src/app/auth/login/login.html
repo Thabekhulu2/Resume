@@ -1,0 +1,38 @@
+<div class="login-page">
+  <form class="login-card" (ngSubmit)="submit()">
+    <h1>Candidate Scoring</h1>
+
+    <div class="role-toggle">
+      <button type="button" [class.active]="role() === 'RECRUITER'" (click)="setRole('RECRUITER')">
+        Recruitment Team
+      </button>
+      <button type="button" [class.active]="role() === 'CANDIDATE'" (click)="setRole('CANDIDATE')">
+        Candidate
+      </button>
+    </div>
+
+    <label>
+      Email
+      <input type="email" name="email" [(ngModel)]="email" required autocomplete="username" />
+    </label>
+
+    <label>
+      Password
+      <input type="password" name="password" [(ngModel)]="password" required autocomplete="current-password" />
+    </label>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button type="submit" class="primary" [disabled]="submitting()">
+      {{ submitting() ? 'Signing in…' : 'Sign in' }}
+    </button>
+
+    @if (role() === 'CANDIDATE') {
+      <p class="signup-link">
+        New candidate? <a routerLink="/candidate/signup">Create an account</a>
+      </p>
+    }
+  </form>
+</div>

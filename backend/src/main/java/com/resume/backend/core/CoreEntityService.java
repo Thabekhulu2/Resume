@@ -79,6 +79,20 @@ public class CoreEntityService {
         return new EntitySnapshot(entity.getId(), entity.getEntityType(), version.getData(), version.getId(), version.getVersionNumber());
     }
 
+    @Transactional(readOnly = true)
+    public UUID getApplicantId(UUID entityId) {
+        return entityRepository.findById(entityId)
+                .orElseThrow(() -> new NoSuchElementException("Entity not found: " + entityId))
+                .getApplicantId();
+    }
+
+    // Cascades to entity_versions/relationships_v2/entity_facts/
+    // application_decisions/interviews via their FK "on delete cascade".
+    @Transactional
+    public void deleteEntity(UUID entityId) {
+        entityRepository.deleteById(entityId);
+    }
+
     @Transactional
     public UUID createRelationship(UUID fromEntityId, UUID toEntityId, String relationshipType, Map<String, Object> attributes) {
         UUID relationshipId = UUID.randomUUID();

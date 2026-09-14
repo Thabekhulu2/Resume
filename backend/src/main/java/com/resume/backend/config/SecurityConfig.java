@@ -3,6 +3,7 @@ package com.resume.backend.config;
 import com.resume.backend.auth.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -39,8 +41,8 @@ public class SecurityConfig {
                 // check on the forwarded request.
                 .requestMatchers("/api/health", "/api/auth/**", "/error").permitAll()
                 // Everything else requires a valid JWT; per-role restrictions
-                // (hasRole("RECRUITER")/hasRole("CANDIDATE")) are added as
-                // each domain endpoint lands in later phases.
+                // are enforced with @PreAuthorize("hasRole(...)") on individual
+                // controller methods (see @EnableMethodSecurity above).
                 .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

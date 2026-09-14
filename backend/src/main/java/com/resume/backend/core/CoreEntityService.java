@@ -42,8 +42,13 @@ public class CoreEntityService {
 
     @Transactional
     public EntityResult createEntity(String entityType, Map<String, Object> attributes) {
+        return createEntity(entityType, attributes, null);
+    }
+
+    @Transactional
+    public EntityResult createEntity(String entityType, Map<String, Object> attributes, UUID applicantId) {
         UUID entityId = UUID.randomUUID();
-        entityRepository.save(new EntityRecord(entityId, entityType));
+        entityRepository.save(new EntityRecord(entityId, entityType, applicantId));
 
         UUID versionId = UUID.randomUUID();
         entityVersionRepository.save(new EntityVersion(versionId, entityId, 1, attributes));

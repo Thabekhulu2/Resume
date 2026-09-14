@@ -18,6 +18,12 @@ public class EntityRecord {
     @Column(name = "entity_type", nullable = false)
     private String entityType;
 
+    // Set only for candidate entities created via a candidate's own
+    // self-service application (spec 0010); recruiter-driven bulk scoring
+    // leaves this null. FKs to candidates(id) since migration 20260914090000.
+    @Column(name = "applicant_id")
+    private UUID applicantId;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 
@@ -28,8 +34,13 @@ public class EntityRecord {
     }
 
     public EntityRecord(UUID id, String entityType) {
+        this(id, entityType, null);
+    }
+
+    public EntityRecord(UUID id, String entityType, UUID applicantId) {
         this.id = id;
         this.entityType = entityType;
+        this.applicantId = applicantId;
     }
 
     public UUID getId() {
@@ -38,6 +49,10 @@ public class EntityRecord {
 
     public String getEntityType() {
         return entityType;
+    }
+
+    public UUID getApplicantId() {
+        return applicantId;
     }
 
     public OffsetDateTime getCreatedAt() {

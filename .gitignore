@@ -28,6 +28,9 @@ __pycache__/
 .venv/
 *.egg-info/
 
+# Java/Maven
+backend/target/
+
 # OS/editor
 .DS_Store
 

@@ -105,5 +105,44 @@ services:
     ports:
       - "53900:3000"
 
+  # New Spring Boot + Angular stack (ticket #29 migration), running alongside
+  # the existing Python/React services above until cutover (Phase 7).
+  backend:
+    build: ./backend
+    container_name: resume-backend
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - DB_URL=${BACKEND_DB_URL:-jdbc:postgresql://host.docker.internal:55322/postgres}
+      - DB_USERNAME=${BACKEND_DB_USERNAME:-postgres}
+      - DB_PASSWORD=${BACKEND_DB_PASSWORD:-postgres}
+      - TEMPORAL_ADDRESS=${TEMPORAL_ADDRESS:-temporal:7233}
+      - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE:-default}
+      - TEMPORAL_TASK_QUEUE=${TEMPORAL_TASK_QUEUE:-main}
+      - RESUMES_STORAGE_DIR=${RESUMES_STORAGE_DIR:-/data/resumes}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-sonnet-5}
+      - USE_LOCAL_LLM=${USE_LOCAL_LLM:-false}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1}
+      - JWT_SECRET=${JWT_SECRET:-dev-only-change-me-dev-only-change-me}
+    volumes:
+      - backend-resumes-data:/data/resumes
+    ports:
+      - "58081:8081"
+
+  frontend-angular:
+    build:
+      context: ./frontend-angular
+    container_name: resume-frontend-angular
+    depends_on:
+      - backend
+    environment:
+      - API_URL=${ANGULAR_API_URL:-http://localhost:58081/api}
+    ports:
+      - "54200:4200"
+
 volumes:
   temporal-db-data:
+  backend-resumes-data:

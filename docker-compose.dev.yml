@@ -12,3 +12,16 @@ services:
     volumes:
       - ./temporal:/app
     command: ["python", "-m", "src.worker"]
+
+  backend:
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/pom.xml:/app/pom.xml
+    command: ["mvn", "-q", "spring-boot:run"]
+
+  frontend-angular:
+    volumes:
+      - ./frontend-angular:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true

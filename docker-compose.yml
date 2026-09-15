@@ -1,10 +1,10 @@
 name: resume-stack
 
-# The full local Supabase stack (API/Kong, Auth, Storage, Studio, Postgres) is
-# run by the Supabase CLI via `supabase start`, NOT by this compose file --
-# `make up` starts it first. Services below reach it on the host:
-#   browser/frontend      -> http://localhost:55321
-#   in-container worker   -> http://host.docker.internal:55321
+# The Supabase CLI (`supabase start`) is kept solely as the local Postgres
+# provider -- `make up` starts it first. Auth/Storage/Studio/Realtime/Edge
+# Functions are not used by this stack; Spring Boot (`backend`) owns auth,
+# file storage, and all data access, connecting directly to Postgres:
+#   backend (in-container) -> jdbc:postgresql://host.docker.internal:55322/postgres
 # (Ports remapped off the Supabase CLI defaults -- see supabase/config.toml --
 # to avoid colliding with other local Supabase stacks on this machine.)
 
@@ -62,55 +62,13 @@ services:
     ports:
       - "58080:8080"
 
-  temporal-worker:
-    build: ./temporal
-    container_name: resume-temporal-worker
-    restart: unless-stopped
-    depends_on:
-      temporal:
-        condition: service_started
-    # Reach the host-bound Supabase API from inside the container.
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - TEMPORAL_ADDRESS=${TEMPORAL_ADDRESS:-temporal:7233}
-      - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE:-default}
-      - TEMPORAL_TASK_QUEUE=${TEMPORAL_TASK_QUEUE:-main}
-      - SUPABASE_URL=${SUPABASE_URL:-http://host.docker.internal:55321}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-dev-service-role-key}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
-      - USE_LOCAL_LLM=${USE_LOCAL_LLM:-0}
-      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1}
-      - RESUMES_STORAGE_BUCKET=${RESUMES_STORAGE_BUCKET:-resumes}
-      - HTTP_TRIGGER_PORT=${HTTP_TRIGGER_PORT:-8001}
-    # Publish the HTTP trigger port to the host so the Supabase Edge Function
-    # (running in the separate supabase-CLI-managed Docker network) can reach
-    # it via host.docker.internal -- container-name DNS only works within the
-    # same compose network.
-    ports:
-      - "58001:8001"
-
-  frontend:
-    build:
-      context: ./frontend
-    container_name: resume-frontend
-    depends_on:
-      temporal:
-        condition: service_started
-    environment:
-      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-http://localhost:55321}
-      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-dev-anon-key}
-      - VITE_API_URL=${VITE_API_URL:-http://localhost:55321/functions/v1}
-    ports:
-      - "53900:3000"
-
-  # New Spring Boot + Angular stack (ticket #29 migration), running alongside
-  # the existing Python/React services above until cutover (Phase 7).
   backend:
     build: ./backend
     container_name: resume-backend
     restart: unless-stopped
+    depends_on:
+      temporal:
+        condition: service_started
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:

@@ -396,6 +396,8 @@ This ensures consistent analytics and prevents corrupt data.
 All template tables should have RLS enabled unless explicitly designed to be public.
 If the product uses Supabase, the agent must:
 
+> **This project's current practice:** the Supabase CLI here is used solely as a local Postgres provider — the app connects via JDBC (Spring Boot), not the Supabase API/PostgREST, so `auth.uid()`-based RLS policies don't apply. `recruiters`/`candidates` had their RLS policies dropped in favor of Spring Security enforcing per-user access in application code (see `supabase/migrations/20260914090000_decouple_auth_from_supabase.sql`). The general RLS guidance below still applies to any product that *does* front Postgres with the Supabase API directly.
+
 **Enable RLS on:**
 - `entities`
 - `entity_versions`

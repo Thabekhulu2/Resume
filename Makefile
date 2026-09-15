@@ -12,18 +12,18 @@ endif
 
 COMPOSE_CMD=docker compose $(foreach file,$(COMPOSE_FILES),-f $(file))
 
-.PHONY: up down reset logs logs-temporal logs-frontend supabase-status
+.PHONY: up down reset logs logs-temporal logs-backend logs-frontend supabase-status
 
-# `up` starts the full local Supabase stack (Postgres + API/Kong + Auth +
-# Storage + Studio) via the Supabase CLI, applying migrations and seed, THEN
-# brings up Temporal + worker + frontend via docker compose. Live-reload
-# (docker-compose.dev.yml) is on by default; pass USE_DEV=0 for a frozen
-# built-image run instead.
+# `up` starts the Supabase CLI stack (used solely as the local Postgres
+# provider -- Auth/Storage/Studio/Edge Functions are not used by this stack),
+# applying migrations and seed, THEN brings up Temporal + backend +
+# frontend-angular via docker compose. Live-reload (docker-compose.dev.yml)
+# is on by default; pass USE_DEV=0 for a frozen built-image run instead.
 up:
 	supabase start
 	@eval "$$(./scripts/supabase-env.sh)"; $(COMPOSE_CMD) up -d
 	@echo ""
-	@echo "Stack up. Frontend http://localhost:3000 | Temporal UI http://localhost:8080 | Supabase Studio http://localhost:54323"
+	@echo "Stack up. Frontend http://localhost:54200 | Backend API http://localhost:58081 | Temporal UI http://localhost:58080"
 
 down:
 	$(COMPOSE_CMD) down
@@ -40,10 +40,13 @@ logs:
 	$(COMPOSE_CMD) logs -f
 
 logs-temporal:
-	$(COMPOSE_CMD) logs -f temporal temporal-worker
+	$(COMPOSE_CMD) logs -f temporal
+
+logs-backend:
+	$(COMPOSE_CMD) logs -f backend
 
 logs-frontend:
-	$(COMPOSE_CMD) logs -f frontend
+	$(COMPOSE_CMD) logs -f frontend-angular
 
 # Supabase is CLI-managed, not a compose service -- use this for its status/keys.
 supabase-status:

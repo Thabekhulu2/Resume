@@ -21,11 +21,11 @@ This template provides only the minimal, reusable pieces for a generic entity gr
 - Prefer storing business attributes inside `data` to keep the relational layer stable across projects.
 
 ## Local workflow
-- Start Supabase locally: `npx supabase@latest start`
-- Apply migrations + (empty) seed: `npx supabase@latest db reset --yes`
-- Export envs for the app: `npx supabase@latest status --output env > .env.local`
+- Start Supabase locally (Postgres only — this project's backend connects directly via JDBC, not the Supabase API): `npx supabase@latest start`
+- Apply migrations + seed: `npx supabase@latest db reset --yes`
+- Connection details for the app: `npx supabase@latest status` (backend uses `DB_URL`/`DB_USERNAME`/`DB_PASSWORD` env vars, e.g. `jdbc:postgresql://localhost:55322/postgres`)
 
 ## Extending
 - Add per-entity kind constraints by introducing `entity_kinds` and JSON Schema validation triggers.
 - Add fact tables (e.g., `entity_facts`) keyed to `entities(id)` with registries for `fact_type` and dimensions.
-- Add role-based access policies (RLS) per project requirements.
+- Add role-based access policies (RLS) per project requirements. Note: this project's `recruiters`/`candidates` RLS policies were dropped in favor of enforcing per-user access in the Spring Boot app layer (see `supabase/migrations/20260914090000_decouple_auth_from_supabase.sql`) — RLS is still available for other tables if needed.

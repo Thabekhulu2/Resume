@@ -142,9 +142,13 @@
 
 ## Phase 7: Cutover
 
-- [ ] `docker-compose.yml`/`docker-compose.dev.yml`: remove `temporal-worker`/`frontend` services (Python + React), keep only the Postgres-providing pieces of the Supabase CLI stack, add `backend`/`frontend-angular` as the running services.
-- [ ] Remove `temporal/`, `frontend/`, and the two Supabase Edge Functions (`supabase/functions/start-scoring-workflow`, `get-my-resume-url`) once the new stack has full parity.
-- [ ] Update root `README.md`/`Guide_for_agents_using_supabase_template.md`/`Makefile` references to the old stack.
+- [x] `docker-compose.yml`/`docker-compose.dev.yml`: removed `temporal-worker`/`frontend` services (Python + React); `backend`/`frontend-angular` are now the only app services (Temporal server/UI/DB kept — the Java worker inside `backend` still needs them). Added `backend`'s missing `depends_on: temporal`.
+- [x] Removed `temporal/`, `frontend/`, and the two Supabase Edge Functions (`supabase/functions/start-scoring-workflow`, `get-my-resume-url`, plus the empty `_shared/`).
+- [x] Updated root `README.md`, `DATABASE.md`, `Guide_for_agents_using_supabase_template.md`, `CLAUDE.md`/`AGENTS.md`, `Makefile`, and `.github/agents/tech-reviewer.agent.md` to the new stack. Also removed `scripts/create-recruiter.sh` (Supabase-Auth-specific, broken against the new Spring Boot auth) and updated README's Auth section accordingly.
+
+**Out-of-order note:** this cutover was done at the user's explicit request *before* Phase 8 verification below had been run (all items still unchecked at the time). The dependency this plan originally stated — "Phase 7 only happens once Phase 8 verification passes" — was knowingly skipped. Phase 8 should still be run for real confidence there's no regression from removing the old stack; if something's missing, the old code is recoverable from git history (`git log -- temporal/ frontend/`) up to the commit that removed it.
+
+**Also flagged, not fixed (separate follow-up needed):** `scripts/audit/check_temporal_registration.py` (a Python-AST-based CI check referenced by `.github/agents/tech-reviewer.agent.md`) parsed the old `temporal/` worker and has no replacement for the new Java worker in `backend/` — Temporal worker-registration is currently unchecked by CI. Out of scope for this docs pass; needs its own ticket.
 
 ## Phase 8: Verification (e2e + adversarial, per repo testing standard)
 

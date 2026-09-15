@@ -3,13 +3,13 @@
 ## Project Structure & Module Organization
 - Docs live at the repo root (`README.md`, `Guide_for_agents_using_supabase_template.md`, `DATABASE.md`, `Generalisable_schema.md`) and are the fastest way to understand the schema and roadmap. Project documentation lives under `docs/` (architecture, ADRs, specs, user guides); reusable fill-in doc templates live under `docs/_templates/`.
 - Supabase assets sit in `supabase/`: `config.toml` (CLI config), `migrations/*.sql` (ordered by timestamp), and `seed.sql` (loads after migrations).
-- Application code is checked in: `frontend/` (Vite + React + TanStack, JSON-driven UI engine under `src/engine/`) and `temporal/` (Python Temporal worker under `src/`).
+- Application code is checked in: `backend/` (Spring Boot / Java — owns auth, data access, file storage, REST API, and hosts the Temporal Java SDK worker) and `frontend-angular/` (Angular). The prior `frontend/` (Vite + React) and `temporal/` (Python worker) have been retired (ticket #29, Phase 7 cutover).
 - Migrations follow a modular pattern (`core` model first, `analytics` next). Keep new domain-specific tables in new migration files rather than editing shipped ones.
 
 ## Build, Test, and Development Commands
-- `supabase start` — Launch local Supabase stack (Postgres, Studio, API, Realtime) using `supabase/config.toml`. Requires Docker and the Supabase CLI.
+- `supabase start` — Launch the local Supabase-CLI Postgres using `supabase/config.toml` (used solely as the Postgres provider now — Auth/Storage/Studio/Edge Functions are not used by the app). Requires Docker and the Supabase CLI.
 - `supabase db reset --config supabase/config.toml` — Recreate the local database, apply all migrations in order, then run `seed.sql`. Run before opening a PR to ensure migrations stay green.
-- Full stack (Supabase stub + Temporal + frontend) — use the Makefile wrappers: `make up` to start (`USE_DEV=1 make up` for live-reload), `make down` to stop, `make reset` to tear down volumes and recreate. These wrap `docker compose -f docker-compose.yml` (plus `docker-compose.dev.yml` when `USE_DEV=1`).
+- Full stack (Supabase-CLI Postgres + Temporal + Spring Boot backend + Angular frontend) — use the Makefile wrappers: `make up` to start (`USE_DEV=1 make up` for live-reload), `make down` to stop, `make reset` to tear down volumes and recreate. These wrap `docker compose -f docker-compose.yml` (plus `docker-compose.dev.yml` when `USE_DEV=1`).
 
 ## Coding Style & Naming Conventions
 - SQL uses snake_case with UUID primary keys (`default gen_random_uuid()`), timestamp columns `created_at`/`updated_at`, and booleans like `is_current` for SCD2 status.

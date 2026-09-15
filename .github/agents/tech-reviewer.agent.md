@@ -55,8 +55,8 @@ the clean ones is the cheapest, highest-value thing you do, and the merge step d
 2. **Scope**: Are changes limited to what the issue asked for? Flag scope creep.
 
 3. **Tests**: Are there meaningful tests covering the behavior change?
-   - Frontend changes → Vitest/RTL tests expected.
-   - Temporal changes → pytest tests expected.
+   - `backend/` (Spring Boot, including the Temporal Java worker) changes → JUnit tests expected.
+   - `frontend-angular/` changes → Angular/Jasmine tests expected.
    - Judge tests by **behavior, not existence**: a test that would still pass if the
      change were reverted/broken is inadequate. Ask "what breaks if this assertion is
      wrong?" — if nothing, request a real behavioral assertion. (Existence-only tests
@@ -64,16 +64,24 @@ the clean ones is the cheapest, highest-value thing you do, and the merge step d
    - If tests are missing or assertion-free, add label `needs-tests` and request changes.
 
 3a. **Domain rubrics** — apply the matching rubric; these are the footguns a generalist diff-read misses:
-   - **Temporal (`temporal/src/**`):** every new `@workflow.defn`/`@activity.defn` is
-     registered in `worker.py` (run `python scripts/audit/check_temporal_registration.py`
-     — #269); every `execute_activity` passes an explicit `RetryPolicy` + timeout (ADR-0003,
-     #270); create/draft activities are idempotent (no fresh UUID per attempt); no
-     non-deterministic calls (`datetime.now`/`random`/`uuid`) in workflow code — use
-     `workflow.now()`; long-lived workflows use `workflow.patched`/versioning before editing loops.
-   - **Frontend engine (`frontend/src/engine/**`, `pages/*.json`):** expression logic has
-     unit tests for precedence/ternary/logical paths (#266); entity writes go through the
-     SCD2 RPC, never a raw `insert`/`delete` that creates two current versions or hard-deletes
-     (#267, ADR-0001); role-gated actions respect `canWrite`/`canOperate` (#268, ADR-0023).
+   - **Temporal worker (`backend/src/main/java/**`, Temporal Java SDK, hosted inside Spring Boot as of ticket #29):** every new `@WorkflowMethod`/`@ActivityMethod` is registered
+     with the `Worker`/`WorkerFactory` at startup; every activity execution passes an explicit
+     `RetryOptions` + timeout (spirit of ADR-0003/#270 carries over from the Python port);
+     create/draft activities are idempotent (no fresh UUID per attempt); no non-deterministic
+     calls (`System.currentTimeMillis`/`UUID.randomUUID`/`Random`) in workflow code — use
+     `Workflow.currentTimeMillis()`/`Workflow.randomUUID()`; long-lived workflows use
+     versioning (`Workflow.getVersion`) before editing loops.
+     **Known gap:** `scripts/audit/check_temporal_registration.py` (referenced by #269) parsed
+     the old Python worker's AST and no longer applies now that `temporal/` is removed — there
+     is currently no automated registration check for the Java worker; treat this rubric as
+     manual review only until a replacement check exists (needs its own ticket).
+   - **Angular frontend (`frontend-angular/src/app/**`):** no JSON-driven page-engine exists
+     in this stack (retired with `frontend/` in the Phase 7 cutover) — each page is a normal
+     Angular standalone component calling REST endpoints via per-domain services (`JobService`,
+     `ApplicationService`, etc.). Entity writes go through `backend/` REST endpoints, never
+     direct DB access from the frontend; role-gated UI/routes respect the JWT's `role` claim
+     (`auth.guard.ts`) and the backend still enforces the same check server-side (never rely on
+     frontend gating alone, spirit of ADR-0023 carries over).
 
 3b. **Consult the Architecture Audit** for whole-repo wiring/posture findings on the
     touched area: `gh run list --workflow=architecture-audit.yml --limit 1` then read the
@@ -81,7 +89,7 @@ the clean ones is the cheapest, highest-value thing you do, and the merge step d
 
 4. **Architecture + ADR gate**:
    - Existing patterns are followed:
-     - TanStack Router and JSON-driven UI engine patterns preserved.
+     - Angular standalone-component + per-domain-service patterns preserved (no reintroducing a JSON-driven page engine or TanStack Router — both retired with the old `frontend/`).
      - Supabase migrations are additive. No editing shipped migrations.
      - Single-line logs. No secrets in code.
    - ADR required when the PR adds/changes infrastructure, swaps a library/service, introduces a new service, or changes deploy/security/data boundaries (including control-plane changes to `.github/**`, `CODEOWNERS`, or agent contracts).
